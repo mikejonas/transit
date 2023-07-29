@@ -1,23 +1,36 @@
 import React from 'react'
-import { Pressable, Text, StyleSheet, View, ViewStyle } from 'react-native'
+import { Pressable, Text, StyleSheet, View } from 'react-native'
 import Icon, { IconNames } from './Icon' // ensure this path is correct
 import adjustColorBrightness from '../utils/adjustColorBrightness'
+
+type ButtonSize = 'small' | 'medium'
 
 interface ButtonProps {
   title?: string
   onPress: () => void
   color?: string
   icon?: IconNames
+  isLoading?: boolean
+  size?: ButtonSize
 }
 
-const Button: React.FC<ButtonProps> = ({ title, onPress, color = '#000000', icon }) => {
+const Button: React.FC<ButtonProps> = ({
+  title,
+  onPress,
+  color = '#000000',
+  icon,
+  isLoading = false,
+  size = 'small',
+}) => {
   const pressedColor = adjustColorBrightness(color, 0.25)
+  const buttonSize = size === 'small' ? styles.small : styles.medium
+
   return (
     <Pressable
       style={({ pressed }) =>
         pressed
-          ? [styles.button, { backgroundColor: pressedColor }]
-          : [styles.button, { backgroundColor: color }]
+          ? [buttonSize, { backgroundColor: pressedColor }]
+          : [buttonSize, { backgroundColor: color }]
       }
       onPress={onPress}>
       <View style={styles.content}>
@@ -29,13 +42,20 @@ const Button: React.FC<ButtonProps> = ({ title, onPress, color = '#000000', icon
 }
 
 const styles = StyleSheet.create({
-  button: {
+  small: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 32,
     minWidth: 32,
-
     borderRadius: 25,
+    elevation: 2,
+  },
+  medium: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 48,
+    minWidth: 48,
+    borderRadius: 30,
     elevation: 2,
   },
   content: {

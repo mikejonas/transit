@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { FlatList, View, SafeAreaView, TextInput } from 'react-native'
-import { KeyboardAvoidingView, Platform } from 'react-native'
 import { useTheme } from '@shopify/restyle'
 import { Theme } from '../../theme/restyle'
 import Box from '../../components/Box'
@@ -140,12 +139,7 @@ const ChatExample: React.FC = () => {
             alignItems: 'center',
             margin: theme.spacing.m,
           }}>
-          <Input
-            value={message}
-            onChangeText={setMessage}
-            placeholder="Type your message here"
-            placeholderTextColor={adjustColorBrightness(theme.colors.text, -0.25)}
-          />
+          <Input value={message} onChangeText={setMessage} placeholder="Type your message here" />
           <Box marginLeft="s">
             <Button icon="UP_ARROW" onPress={() => submitMockMessage(message)} />
           </Box>
