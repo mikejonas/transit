@@ -1,21 +1,21 @@
-import React from 'react';
-import {Image} from 'react-native';
-import Text from '../../components/Text';
-import Box from '../../components/Box';
-import {Message} from '.';
-import BlinkingCursor from './BlinkingCursor';
+import React from 'react'
+import { Image } from 'react-native'
+import Text from '../../components/Text'
+import Box from '../../components/Box'
+import { Message } from '.'
+import BlinkingCursor from './BlinkingCursor'
 
-const avatarSize = 25;
-const marginLeftSize = 's'; // Corresponding to your theme spacing value
+const avatarSize = 25
+const marginLeftSize = 's' // Corresponding to your theme spacing value
 
 const ChatMessage: React.FC<{
-  item: Message;
-  isCursorActive?: Boolean;
-}> = ({item, isCursorActive}) => (
-  <Box marginBottom="s">
+  item: Message
+  isCursorActive?: Boolean
+}> = ({ item, isCursorActive }) => (
+  <Box>
     <Box flexDirection="row" alignItems="center">
       <Image
-        source={{uri: item.user.avatar}}
+        source={{ uri: item.user.avatar }}
         style={{
           width: avatarSize,
           height: avatarSize,
@@ -26,12 +26,12 @@ const ChatMessage: React.FC<{
         <Text variant="body">{item.user.name}</Text>
       </Box>
     </Box>
-    <Box style={{marginLeft: avatarSize + 8}}>
+    <Box style={{ marginLeft: avatarSize + 8 }}>
       <Text variant="body">
         {item.text} {isCursorActive && <BlinkingCursor />}
       </Text>
     </Box>
   </Box>
-);
+)
 
-export default ChatMessage;
+export default ChatMessage

@@ -1,16 +1,17 @@
-import { createTheme } from '@shopify/restyle';
+import { createTheme } from '@shopify/restyle'
 
 const palette = {
-  darkGrey: '#2a2631',
+  darkGrey: '#1c1c22',
   charcoal: '#23272A',
   softBlue: '#444b50',
   softBlueLight: '#bdc8d0',
   white: '#FFFFFF',
   vibrantBlue: '#7289DA',
+  vibrantPurple: '#8530C8',
   black: '#000000',
   lightGrey: '#d7dadf',
   red: '#FF0000',
-};
+}
 
 // default theme structure. Modify colors in the exported themes below
 const baseTheme = createTheme({
@@ -21,6 +22,7 @@ const baseTheme = createTheme({
     title: '',
     text: '',
     error: '',
+    buttonPurple: '',
   },
   spacing: {
     s: 8,
@@ -64,7 +66,7 @@ const baseTheme = createTheme({
       backgroundColor: 'cardSecondaryBackground',
     },
   },
-});
+})
 
 export const darkTheme = createTheme({
   ...baseTheme,
@@ -75,8 +77,9 @@ export const darkTheme = createTheme({
     title: palette.white,
     text: palette.white,
     error: palette.red,
+    buttonPurple: palette.vibrantPurple,
   },
-});
+})
 
 export const lightTheme = createTheme({
   ...darkTheme,
@@ -87,7 +90,8 @@ export const lightTheme = createTheme({
     title: palette.black,
     text: palette.black,
     error: palette.red,
+    buttonPurple: palette.vibrantPurple,
   },
-});
+})
 
-export type Theme = typeof darkTheme;
+export type Theme = typeof darkTheme
