@@ -4,7 +4,6 @@ import { useTheme } from '@shopify/restyle'
 import { Theme } from '../../theme/restyle'
 import Box from '../../components/Box'
 import Button from '../../components/Button'
-import adjustColorBrightness from '../../utils/adjustColorBrightness'
 import { botReply, mockBot, mockMessages, mockUser } from './mockMessages'
 import ChatMessage from './ChatMessage'
 import Input from '../../components/Input'
@@ -23,7 +22,7 @@ export interface Message {
  * This is a rough hacked together version of chat ui. It would need to be cleaned up to build upon
  */
 
-const ChatExample: React.FC = () => {
+const ChatScreen: React.FC = () => {
   const theme = useTheme<Theme>()
   const [message, setMessage] = useState('')
   const [isTyping, setIsTyping] = useState(false) // New state to track whether the bot is typing
@@ -149,4 +148,4 @@ const ChatExample: React.FC = () => {
   )
 }
 
-export default ChatExample
+export default ChatScreen

@@ -4,11 +4,13 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 
 import ChatScreen from '../../screens/Chat'
 import { darkTheme } from '../../theme/restyle'
+import CustomDrawerContent from './CustomDrawerContent'
 
 export type StackNavigatorParams = {
   DailyHoroscope: undefined
   WeeklyHoroscope: undefined
   MonthlyHoroscope: undefined
+  Logout: undefined
 }
 
 const Drawer = createDrawerNavigator<StackNavigatorParams>()
@@ -33,7 +35,8 @@ const MainNavigator = () => {
             elevation: 0, // this removes shadow on Android
           },
           headerTintColor: darkTheme.colors.title,
-        }}>
+        }}
+        drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen
           name="DailyHoroscope"
           component={ChatScreen}
