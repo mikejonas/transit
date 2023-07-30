@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet } from 'react-native'
-import Box from '../../components/Box'
-import Button from '../../components/Button'
-import Input from '../../components/Input'
-import supabaseClient from '../../utils/supabaseClient'
+import React, { useState } from 'react'
+import Button from '@components/Button'
+import Input from '@components/Input'
+import supabaseClient from '@utils/supabaseClient'
+import Box from '@components/Box'
 
 const Auth = () => {
   const [email, setEmail] = useState('')
@@ -43,18 +42,5 @@ const Auth = () => {
     </Box>
   )
 }
-
-const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 10,
-  },
-  button: {
-    marginTop: 10,
-  },
-})
 
 export default Auth

@@ -2,8 +2,8 @@ import * as React from 'react'
 import { Text, StatusBar } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 
-import ChatScreen from '../../screens/Chat'
-import { darkTheme } from '../../theme/restyle'
+import ChatScreen from '@screens/Chat'
+import { darkTheme } from '@theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
 
 export type StackNavigatorParams = {

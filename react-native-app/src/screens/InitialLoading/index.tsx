@@ -1,6 +1,6 @@
 import React from 'react'
 import { ActivityIndicator } from 'react-native'
-import Box from '../../components/Box'
+import Box from '@components/Box'
 
 const InitialLoadingScreen = () => (
   <Box backgroundColor="background" flex={1} justifyContent="center" alignItems="center">

@@ -33,24 +33,18 @@ npm start
 
 I think it's better to let Metro Bundler run in its own terminal. Open a _new_ terminal from the _root_ of the React Native project and run the following command to start either or both the _Android_ or _iOS_ app:
 
-### For Android
-
 ```bash
 npm run ios
 npm run android
 ```
 
-If everything is set up _correctly_, the app should open in the Emulator
-
 ## Step 5: Modifying the App
 
-With the App running, you can make changes and you can see them reflected in the App.
+Pretty much everything lives in the `/app` directory. Changes should be reflected live in the app simulator.
 
-Pretty much everything lives in the /app directory
-
-- **/navigators**: Handles the navigation between different screens. It's common to have multiple navigators to handle different unique flows in the app.
-- **/screens**: These are the pages of the app. They're usually passed into different routes in a navigator
-- **/components**: Reusable UI elements that have standardized to the apps theming and layout
+- `/navigators`: Handles the navigation between different screens. It's common to have multiple navigators to handle different unique flows in the app.
+- `/screens`: These are the pages of the app. They're usually passed into different routes in a navigator
+- `/components`: Reusable UI elements that have standardized to the apps theming and layout
 
 # Troubleshooting
 

@@ -1,6 +1,6 @@
-import {createBox} from '@shopify/restyle';
-import {Theme} from '../theme/restyle';
+import { createBox } from '@shopify/restyle'
+import { Theme } from '@theme/restyle'
 
-const Box = createBox<Theme>();
+const Box = createBox<Theme>()
 
-export default Box;
+export default Box

@@ -7,12 +7,3 @@ module.exports = {
   semi: false,
   singleQuote: true,
 }
-
-// {
-//   "trailingComma": "es5",
-//   "tabWidth": 2,
-//   "semi": true,
-//   "jsxSingleQuote": false,
-//   "bracketSpacing": true,
-// "jsxBracketSameLine": false,
-// }

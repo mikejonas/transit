@@ -2,7 +2,7 @@ import React from 'react'
 import { Image } from 'react-native'
 
 export const ICONS = {
-  UP_ARROW: require('../assets/icons/up-arrow.png'),
+  UP_ARROW: require('@assets/icons/up-arrow.png'),
   // add other icons here...
 }
 

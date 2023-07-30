@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from 'react'
 import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack'
-import MainNavigator from '../MainNavigator'
-import InitialLoadingScreen from '../../screens/InitialLoading'
-import Auth from '../../screens/Auth'
+import MainNavigator from '@navigators/MainNavigator'
+import InitialLoadingScreen from '@screens/InitialLoading'
+import Auth from '@screens/Auth'
 import { useTheme } from '@shopify/restyle'
-import { Theme } from '../../theme/restyle'
-import supabaseClient from '../../utils/supabaseClient'
+import { Theme } from '@theme/restyle'
+import supabaseClient from '@utils/supabaseClient'
 import { Session } from '@supabase/supabase-js'
 
 export type StackNavigatorParams = {
@@ -52,9 +52,8 @@ const AppNavigator = () => {
         routes: [{ name: session ? 'MainNavigator' : 'Auth' }],
       })
     }
-  }, [session, isSessionInitialized])
+  }, [session, isSessionInitialized, navigation])
 
-  // const initialRouteName = session ? 'MainNavigator' : 'Auth'
   const initialRouteName = 'Loading'
 
   return (

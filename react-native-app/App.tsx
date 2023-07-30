@@ -1,8 +1,8 @@
-import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import AppNavigator from './src/navigators/AppNavigator';
-import {ThemeProvider} from '@shopify/restyle';
-import {darkTheme, lightTheme} from './src/theme/restyle';
+import React from 'react'
+import { NavigationContainer } from '@react-navigation/native'
+import AppNavigator from '@navigators/AppNavigator'
+import { ThemeProvider } from '@shopify/restyle'
+import { darkTheme } from '@theme/restyle'
 
 const App = () => {
   return (
@@ -11,7 +11,7 @@ const App = () => {
         <AppNavigator />
       </NavigationContainer>
     </ThemeProvider>
-  );
-};
+  )
+}
 
-export default App;
+export default App

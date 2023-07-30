@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pressable, Text, StyleSheet, View } from 'react-native'
 import Icon, { IconNames } from './Icon' // ensure this path is correct
-import adjustColorBrightness from '../utils/adjustColorBrightness'
+import adjustColorBrightness from '@utils/adjustColorBrightness'
 
 type ButtonSize = 'small' | 'medium'
 

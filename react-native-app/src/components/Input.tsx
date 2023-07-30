@@ -2,17 +2,14 @@
 import React from 'react'
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps } from 'react-native'
 import { useTheme } from '@shopify/restyle'
-import { Theme } from '../theme/restyle'
-import adjustColorBrightness from '../utils/adjustColorBrightness'
+import { Theme } from '@theme/restyle'
+import adjustColorBrightness from '@utils/adjustColorBrightness'
 
-interface InputProps extends RNTextInputProps {
-  label?: string
-}
+interface InputProps extends RNTextInputProps {}
 
-const Input = ({ label, ...props }: InputProps) => {
+const Input = ({ ...props }: InputProps) => {
   const theme = useTheme<Theme>()
 
-  const errorColor = theme.colors.error
   const textColor = theme.colors.text
   const borderColor = adjustColorBrightness(textColor, -0.7)
   const placeholderTextColor = adjustColorBrightness(theme.colors.text, -0.25)

@@ -1,3 +1,4 @@
+import React from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import Box from './Box'
 import Text from './Text'
