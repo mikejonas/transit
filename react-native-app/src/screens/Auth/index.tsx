@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import Button from '@components/Button'
-import Input from '@components/Input'
-import supabaseClient from '@utils/supabaseClient'
-import Box from '@components/Box'
+import Box from 'components/Box'
+import Button from 'components/Button'
+import Input from 'components/Input'
+import supabaseClient from 'utils/supabaseClient'
 
 const Auth = () => {
   const [email, setEmail] = useState('')

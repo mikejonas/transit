@@ -1,18 +1,18 @@
-import React, {useState, useEffect} from 'react';
-import {View} from 'react-native';
+import React, { useState, useEffect } from 'react'
+import { View } from 'react-native'
 
 const BlinkingCursor = () => {
-  const [showCursor, setShowCursor] = useState(true);
+  const [showCursor, setShowCursor] = useState(true)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setShowCursor(prevShow => !prevShow);
-    }, 500);
+      setShowCursor(prevShow => !prevShow)
+    }, 500)
 
     return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+      clearInterval(intervalId)
+    }
+  }, [])
 
   return (
     <View
@@ -23,7 +23,7 @@ const BlinkingCursor = () => {
         alignSelf: 'flex-end',
       }}
     />
-  );
-};
+  )
+}
 
-export default BlinkingCursor;
+export default BlinkingCursor

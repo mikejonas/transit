@@ -1,9 +1,10 @@
 // components/Input.js
+
 import React from 'react'
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps } from 'react-native'
 import { useTheme } from '@shopify/restyle'
-import { Theme } from '@theme/restyle'
-import adjustColorBrightness from '@utils/adjustColorBrightness'
+import { Theme } from 'theme/restyle'
+import adjustColorBrightness from 'utils/adjustColorBrightness'
 
 interface InputProps extends RNTextInputProps {}
 

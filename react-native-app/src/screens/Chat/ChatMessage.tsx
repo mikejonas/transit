@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image } from 'react-native'
-import Text from '@components/Text'
-import Box from '@components/Box'
+import Box from 'components/Box'
+import Text from 'components/Text'
 import { Message } from '.'
 import BlinkingCursor from './BlinkingCursor'
 

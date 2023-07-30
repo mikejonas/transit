@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { FlatList, View, SafeAreaView } from 'react-native'
 import { useTheme } from '@shopify/restyle'
-import { Theme } from '@theme/restyle'
-import Box from '@components/Box'
-import Button from '@components/Button'
-import { botReply, mockBot, mockMessages, mockUser } from './mockMessages'
+import Box from 'components/Box'
+import Button from 'components/Button'
+import Input from 'components/Input'
+import { Theme } from 'theme/restyle'
 import ChatMessage from './ChatMessage'
-import Input from '@components/Input'
+import { botReply, mockBot, mockMessages, mockUser } from './mockMessages'
 
 interface User {
   avatar: string

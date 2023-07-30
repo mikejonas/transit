@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 /**
  * Lightens or darkens a hexadecimal color.
  *

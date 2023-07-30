@@ -1,14 +1,14 @@
-// navigation/AppNavigator.js
-
 import React, { useEffect, useState } from 'react'
+import { StatusBar } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack'
-import MainNavigator from '@navigators/MainNavigator'
-import InitialLoadingScreen from '@screens/InitialLoading'
-import Auth from '@screens/Auth'
 import { useTheme } from '@shopify/restyle'
-import { Theme } from '@theme/restyle'
-import supabaseClient from '@utils/supabaseClient'
 import { Session } from '@supabase/supabase-js'
+import MainNavigator from 'navigators/MainNavigator'
+import Auth from 'screens/Auth'
+import InitialLoadingScreen from 'screens/InitialLoading'
+import { Theme } from 'theme/restyle'
+import supabaseClient from 'utils/supabaseClient'
 
 export type StackNavigatorParams = {
   Auth: undefined
@@ -18,7 +18,6 @@ export type StackNavigatorParams = {
 
 const Stack = createStackNavigator<StackNavigatorParams>() // provide the type to your createStackNavigator
 
-import { useNavigation } from '@react-navigation/native'
 type AppNavigationProp = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
 const AppNavigator = () => {
   const navigation = useNavigation<AppNavigationProp>()
@@ -57,30 +56,33 @@ const AppNavigator = () => {
   const initialRouteName = 'Loading'
 
   return (
-    <Stack.Navigator
-      initialRouteName={initialRouteName}
-      screenOptions={{ animationEnabled: false }}>
-      <Stack.Screen
-        name="Loading"
-        component={InitialLoadingScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Auth"
-        component={Auth}
-        options={{
-          headerShown: false, // This will hide the header
-          cardStyle: { backgroundColor: theme.colors.background },
-        }}
-      />
-      <Stack.Screen
-        name="MainNavigator"
-        component={MainNavigator}
-        options={{
-          headerShown: false, // This will hide the header
-        }}
-      />
-    </Stack.Navigator>
+    <>
+      <StatusBar barStyle="light-content" />
+      <Stack.Navigator
+        initialRouteName={initialRouteName}
+        screenOptions={{ animationEnabled: false }}>
+        <Stack.Screen
+          name="Loading"
+          component={InitialLoadingScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Auth"
+          component={Auth}
+          options={{
+            headerShown: false, // This will hide the header
+            cardStyle: { backgroundColor: theme.colors.background },
+          }}
+        />
+        <Stack.Screen
+          name="MainNavigator"
+          component={MainNavigator}
+          options={{
+            headerShown: false, // This will hide the header
+          }}
+        />
+      </Stack.Navigator>
+    </>
   )
 }
 

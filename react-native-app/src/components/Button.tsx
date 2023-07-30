@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pressable, Text, StyleSheet, View } from 'react-native'
+import adjustColorBrightness from 'utils/adjustColorBrightness'
 import Icon, { IconNames } from './Icon' // ensure this path is correct
-import adjustColorBrightness from '@utils/adjustColorBrightness'
 
 type ButtonSize = 'small' | 'medium'
 
@@ -19,7 +19,6 @@ const Button: React.FC<ButtonProps> = ({
   onPress,
   color = '#000000',
   icon,
-  isLoading = false,
   size = 'small',
 }) => {
   const pressedColor = adjustColorBrightness(color, 0.25)

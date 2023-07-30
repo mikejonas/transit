@@ -8,12 +8,12 @@ module.exports = {
       {
         root: ['./src'],
         alias: {
-          '@assets': './src/assets',
-          '@components': './src/components',
-          '@screens': './src/screens',
-          '@theme': './src/theme',
-          '@utils': './src/utils',
-          '@navigators': './src/navigators',
+          assets: './src/assets',
+          components: './src/components',
+          screens: './src/screens',
+          theme: './src/theme',
+          utils: './src/utils',
+          navigators: './src/navigators',
         },
       },
     ],
