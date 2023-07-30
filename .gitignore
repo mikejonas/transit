@@ -10,3 +10,6 @@ yarn-error.log
 
 # global
 *.env
+.vscode/
+supabase/.temp/
+supabase/.branches/
