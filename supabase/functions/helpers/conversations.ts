@@ -1,23 +1,18 @@
 import { SupabaseClient } from "SupabaseClient";
 import { UserDetailsDatabase } from "./user_details.ts";
-import { ChatCompletionMessage, OpenAI } from "OpenAi";
+import { Message, Messages } from "./messages.ts";
+import { OpenAI } from "OpenAi";
 import { GetSunSign } from "./astrology.ts";
 
-interface Message {
-  conversation_id: number;
-  user_id: string;
-  message_id: number;
-  role: string;
-  content: string;
-}
-
-class Conversation {
+class Conversations {
   supabase: SupabaseClient;
   user_details_db: UserDetailsDatabase;
+  messages_db: Messages;
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
     this.user_details_db = new UserDetailsDatabase(supabase);
+    this.messages_db = new Messages(supabase);
   }
 
   public async StartNewConversation(user_id: string): Promise<Message> {
@@ -40,21 +35,25 @@ class Conversation {
       throw new Error("Unable to start new conversation. Unexpected data.");
     }
     const conversation_id = data[0].conversation_id;
-    const message = await this.GetFirstMessage(conversation_id, user_id);
+    const message = await this.GetFirstMessage(
+      conversation_id,
+      user_id,
+    );
     return message;
   }
 
-  public async AddMessage(
+  // Adds a message to the conversation and then returns the assistants response message that is added into the messages db.
+  public async AddMessageToConversation(
+    user_id: string,
     conversation_id: number,
     new_message: string,
   ): Promise<Message> {
-    if (!await this.DoMessagesExist(conversation_id)) {
+    if (!await this.DoesConversationExist(conversation_id)) {
       throw new Error(
-        "You must first start a comversation.",
+        "Conversation does not exist. You must start a new conversation first.",
       );
     }
-    this.InsertMessae(conversation_id, "user", new_message);
-    // Loading the conversation will return the newly added message.
+    this.messages_db.AddMessage(user_id, conversation_id, "user", new_message);
     const conversation = await this.GetConversation(conversation_id);
     const openai_messages = [];
     for (let i = 0; i < conversation.length; i++) {
@@ -66,97 +65,40 @@ class Conversation {
     const openai = new OpenAI(Deno.env.get("OPENAI_API_KEY")!);
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      // TODO: Sort out how to make this happy.
+      // TODO: Sort out how to make this happy. Code runs just fine.
       messages: openai_messages,
     });
     const assistant_response = completion.choices[0].message.content!;
-    const first_message = await this.InsertMessae(
+    const assistant_message = await this.messages_db.AddMessage(
+      user_id,
       conversation_id,
       "assistant",
       assistant_response,
     );
-    return first_message;
-  }
-
-  private async GetConversation(conversation_id: number): Promise<Message[]> {
-    const { data, error } = await this.supabase
-      .from("Messages")
-      .select()
-      .eq("conversation_id", conversation_id);
-    if (error) {
-      throw new Error(error.message);
-    }
-    const messages: Message[] = [];
-    for (let i = 0; i < data.length; i++) {
-      const message: Message = {
-        conversation_id: data[0].conversation_id,
-        user_id: data[0].user_id,
-        message_id: data[0].message_id,
-        role: data[0].role,
-        content: data[0].content,
-      };
-      messages.push(message);
-    }
-    return messages;
-  }
-
-  private async DoMessagesExist(conversation_id: number): Promise<boolean> {
-    const { data, error } = await this.supabase
-      .from("Messages")
-      .select()
-      .eq("conversation_id", conversation_id);
-    if (error) {
-      throw new Error(error.message);
-    }
-    return data.length !== 0;
-  }
-
-  private async InsertMessae(
-    conversation_id: number,
-    role: string,
-    content: string,
-  ): Promise<Message> {
-    const { data, error } = await this.supabase
-      .from("Messages")
-      .insert([
-        {
-          conversation_id: conversation_id,
-          role: role,
-          content: content,
-        },
-      ])
-      .select();
-    if (error) {
-      throw new Error(error.message);
-    }
-    const message: Message = {
-      conversation_id: data[0].conversation_id,
-      user_id: data[0].user_id,
-      message_id: data[0].message_id,
-      role: data[0].role,
-      content: data[0].content,
-    };
-    return message;
+    return assistant_message;
   }
 
   private async GetFirstMessage(
     conversation_id: number,
     user_id: string,
   ): Promise<Message> {
-    if (await this.DoMessagesExist(conversation_id)) {
-      throw new Error("Messages already exits. Cannot get first message.");
+    if (await this.messages_db.DoMessagesExist(conversation_id)) {
+      throw new Error(
+        "Messages already exist. You must start a new conversation before calling GetFirstMessage.",
+      );
     }
     const user_details = await this.user_details_db.GetUserDetails(user_id);
-
     const user_prompt = "In one paragraph, tell me what my horoscope is on " +
       new Date().toDateString() + " given that my sign is " +
       GetSunSign(user_details) + ".";
-    const system_message = await this.InsertMessae(
+    const system_message = await this.messages_db.AddMessage(
+      user_id,
       conversation_id,
       "system",
       "You are an astrologer who specializes in reading horoscopes.",
     );
-    const user_message = await this.InsertMessae(
+    const user_message = await this.messages_db.AddMessage(
+      user_id,
       conversation_id,
       "user",
       user_prompt,
@@ -176,14 +118,34 @@ class Conversation {
       ],
     });
     const assistant_response = completion.choices[0].message.content!;
-    const first_message = await this.InsertMessae(
+    const first_message = await this.messages_db.AddMessage(
+      user_id,
       conversation_id,
       "assistant",
       assistant_response,
     );
     return first_message;
   }
+
+  private async DoesConversationExist(
+    conversation_id: number,
+  ): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from("Conversations")
+      .select()
+      .eq("conversation_id", conversation_id);
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data.length !== 0;
+  }
+
+  private async GetConversation(conversation_id: number): Promise<Message[]> {
+    if (!await this.DoesConversationExist(conversation_id)) {
+      throw new Error("Conversation does not exist you must start one first.");
+    }
+    return this.messages_db.GetAllMessagesInConversation(conversation_id);
+  }
 }
 
-export { Conversation };
-export type { Message };
+export { Conversations };

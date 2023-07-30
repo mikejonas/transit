@@ -1,7 +1,7 @@
 import { serve } from "Serve";
 import { createClient } from "SupabaseClient";
 import { ErrorResponse, SuccessfulResponse } from "../helpers/response.ts";
-import { Conversation } from "../helpers/conversations.ts";
+import { Conversations } from "../helpers/conversations.ts";
 
 serve(async (req) => {
   try {
@@ -12,7 +12,7 @@ serve(async (req) => {
     });
     const body = await req.json();
     const user_id = body.user_id;
-    const conversation = new Conversation(supabase);
+    const conversation = new Conversations(supabase);
     const message = await conversation.StartNewConversation(user_id);
     return SuccessfulResponse(JSON.stringify(message));
   } catch (error) {
