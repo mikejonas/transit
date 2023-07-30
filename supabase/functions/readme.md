@@ -8,13 +8,13 @@ details include the user's ID, name, and birth date.
 ## Endpoint URL
 
 ```
-POST http://localhost:54321/functions/v1/add-user-details
+POST https://evsqlmjsaibcaccunysk.supabase.co/functions/v1/add-user-details
 ```
 
 ## cURL Request
 
 ```bash
-curl -L -X POST 'http://localhost:54321/functions/v1/add-user-details' \
+curl -L -X POST 'https://evsqlmjsaibcaccunysk.supabase.co/functions/v1/add-user-details' \
      -H 'Authorization: Bearer <TOKEN>' \
      --data '{"user_id":"<USER_ID>", "name":"<NAME>", "birth_date":"<BIRTH_DATE>"}'
 ```
@@ -69,13 +69,13 @@ user's ID, name, and birth date.
 ## Endpoint URL
 
 ```
-POST http://localhost:54321/functions/v1/get-user-details
+POST https://evsqlmjsaibcaccunysk.supabase.co/functions/v1/get-user-details
 ```
 
 ## cURL Request
 
 ```bash
-curl -L -X POST 'http://localhost:54321/functions/v1/get-user-details' \
+curl -L -X POST 'https://evsqlmjsaibcaccunysk.supabase.co/functions/v1/get-user-details' \
      -H 'Authorization: Bearer <TOKEN>' \
      --data '{"user_id":"<USER_ID>"}'
 ```
@@ -132,13 +132,13 @@ Given the user id start a new conversation and get the first response from GPT.
 ## Endpoint URL
 
 ```
-POST http://localhost:54321/functions/v1/start-new-conversation
+POST https://evsqlmjsaibcaccunysk.supabase.co/functions/v1/start-new-conversation
 ```
 
 ## cURL Request
 
 ```bash
-curl -L -X POST 'http://localhost:54321/functions/v1/start-new-conversation' \
+curl -L -X POST 'https://evsqlmjsaibcaccunysk.supabase.co/functions/v1/start-new-conversation' \
      -H 'Authorization: Bearer <TOKEN>' \
      --data '{"user_id":"<USER_ID>"}'
 ```
@@ -191,13 +191,13 @@ Adds a message to a conversation and returns the response from GPT.
 ## Endpoint URL
 
 ```
-POST http://localhost:54321/functions/v1/add-message
+POST https://evsqlmjsaibcaccunysk.supabase.co/functions/v1/add-message
 ```
 
 ## cURL Request
 
 ```bash
-curl -L -X POST 'http://localhost:54321/functions/v1/add-message' \
+curl -L -X POST 'https://evsqlmjsaibcaccunysk.supabase.co/functions/v1/add-message' \
      -H 'Authorization: Bearer <TOKEN>' \
      --data '{"user_id":"<USER_ID>", "conversation_id":"<CONVERSATION_ID>", "new_message":"<NEW_MESSAGE>"}'
 ```
