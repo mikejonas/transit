@@ -138,7 +138,9 @@ const ChatScreen: React.FC = () => {
             alignItems: 'center',
             margin: theme.spacing.m,
           }}>
-          <Input value={message} onChangeText={setMessage} placeholder="Type your message here" />
+          <Box flex={1}>
+            <Input value={message} onChangeText={setMessage} placeholder="Type your message here" />
+          </Box>
           <Box marginLeft="s">
             <Button icon="UP_ARROW" onPress={() => submitMockMessage(message)} />
           </Box>

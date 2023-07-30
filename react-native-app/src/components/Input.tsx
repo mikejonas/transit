@@ -1,8 +1,6 @@
 // components/Input.js
 import React from 'react'
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps } from 'react-native'
-import Box from './Box'
-import Text from './Text'
 import { useTheme } from '@shopify/restyle'
 import { Theme } from '../theme/restyle'
 import adjustColorBrightness from '../utils/adjustColorBrightness'

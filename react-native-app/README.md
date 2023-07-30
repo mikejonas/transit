@@ -1,72 +1,73 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# React Native Getting Started
 
-# Getting Started
+## Step 0:
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+> Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
-## Step 1: Start the Metro Server
+## Step 1: Install Dependencies
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
-
-To start Metro, run the following command from the _root_ of your React Native project:
+Make sure you're in the root directory of the react native app (where the `package.json` lives) and Run the following commands:
 
 ```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
+npm install # js dependencies
+npx pod-install ios # ios dependencies
 ```
 
-## Step 2: Start your Application
+## Step 2: Update the .env file
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+- Duplicate `.env.template`
+- Rename it to `.env`
+- Fill out missing values
+
+## Step 3: Start the Metro Server
+
+**Metro** is a JavaScript bundler that ships with React Native.
+
+To start Metro, run the following command from the _root_ of the React Native app:
+
+```bash
+npm start
+```
+
+## Step 4: Start the App
+
+I think it's better to let Metro Bundler run in its own terminal. Open a _new_ terminal from the _root_ of the React Native project and run the following command to start either or both the _Android_ or _iOS_ app:
 
 ### For Android
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
 npm run ios
-
-# OR using Yarn
-yarn ios
+npm run android
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+If everything is set up _correctly_, the app should open in the Emulator
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+## Step 5: Modifying the App
 
-## Step 3: Modifying your App
+With the App running, you can make changes and you can see them reflected in the App.
 
-Now that you have successfully run the app, let's modify it.
+Pretty much everything lives in the /app directory
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+- **/navigators**: Handles the navigation between different screens. It's common to have multiple navigators to handle different unique flows in the app.
+- **/screens**: These are the pages of the app. They're usually passed into different routes in a navigator
+- **/components**: Reusable UI elements that have standardized to the apps theming and layout
 
 # Troubleshooting
 
 If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+
+Here are some things I try:
+
+- Reload the app - type `r` in the metro process
+- Try git stashing any changes you've made.
+  - `git stash` to stash
+  - `git stash pop` to unstash
+- If pulling in new changes that have added or removed packages or modifying packages
+  - Try running `npm install` and / or `npx pod-install ios` in the base directory
+- Sometimes the ios or android simulator can get in a weird state and throw errors.
+  - Restart the metro process `^c` `npm start`
+  - Restart the metro process and clear the cache `^c` `npm start -- --reset-cache`
+  - If all else fails, restart your computer ¯\_(ツ)\_/¯
 
 # Learn More
 
