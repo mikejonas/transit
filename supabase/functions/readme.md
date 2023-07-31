@@ -29,8 +29,6 @@ values.
 
 ### Request Body Parameters
 
-- `user_id` (string, required): A unique identifier for the user. Must be a
-  valid UUID.
 - `name` (string, required): The name of the user.
 - `birth_date` (string, required): The birth date of the user in the format
   `YYYY-MM-DD`.
@@ -88,9 +86,6 @@ Replace `<TOKEN>`, `<USER_ID>` with appropriate values.
   This must be a valid JWT token.
 
 ### Request Body Parameters
-
-- `user_id` (string, required): A unique identifier for the user. Must be a
-  valid UUID.
 
 ## Response
 
@@ -152,8 +147,6 @@ Replace `<TOKEN>`, `<USER_ID>` with appropriate values.
 
 ### Request Body Parameters
 
-- `user_id` (string, required): A unique identifier for the user. Must be a
-  valid UUID.
 
 ## Response
 
@@ -212,8 +205,6 @@ appropriate values.
 
 ### Request Body Parameters
 
-- `user_id` (string, required): A unique identifier for the user. Must be a
-  valid UUID.
 - `conversation_id` (number, required): A unique identifier for the conversation
   you are adding a message to.
 - `new_message` (string, required): The content of the new message you want to
