@@ -6,7 +6,7 @@ import {
   UserDetailsDatabase,
 } from "../helpers/user_details.ts";
 
-serve(async (req: Request) => {
+serve(async (req) => {
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
   // TODO: Add in row level auth correctly
   const SUPABASE_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;

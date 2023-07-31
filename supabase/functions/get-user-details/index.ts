@@ -3,7 +3,7 @@ import { createClient } from "SupabaseClient";
 import { ErrorResponse, SuccessfulResponse } from "../helpers/response.ts";
 import { UserDetailsDatabase } from "../helpers/user_details.ts";
 
-serve(async (req: Request) => {
+serve(async (req) => {
   try {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
