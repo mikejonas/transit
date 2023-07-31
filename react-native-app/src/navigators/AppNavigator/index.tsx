@@ -22,18 +22,18 @@ type AppNavigationProp = StackNavigationProp<StackNavigatorParams, 'MainNavigato
 const AppNavigator = () => {
   const navigation = useNavigation<AppNavigationProp>()
   const theme = useTheme<Theme>()
-  const [session, setSession] = useState<Session | null>(null)
+  const [sessionObject, setSessionObject] = useState<Session | null>(null)
   const [isSessionInitialized, setIsSessionInitialized] = useState(true)
 
   useEffect(() => {
     const fetchSession = async () => {
       const session = await supabaseClient.auth.getSession()
-      setSession(session.data.session)
+      setSessionObject(session.data.session)
       setIsSessionInitialized(false)
     }
     const { data: subscription } = supabaseClient.auth.onAuthStateChange(
       async (_event, session) => {
-        setSession(session)
+        setSessionObject(session)
       },
     )
 
@@ -48,10 +48,10 @@ const AppNavigator = () => {
     if (!isSessionInitialized) {
       navigation.reset({
         index: 0,
-        routes: [{ name: session ? 'MainNavigator' : 'Auth' }],
+        routes: [{ name: sessionObject ? 'MainNavigator' : 'Auth' }],
       })
     }
-  }, [session, isSessionInitialized, navigation])
+  }, [sessionObject, isSessionInitialized, navigation])
 
   const initialRouteName = 'Loading'
 

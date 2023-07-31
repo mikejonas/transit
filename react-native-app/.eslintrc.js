@@ -6,7 +6,7 @@ module.exports = {
     'import/resolver': {
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        moduleDirectory: ['node_modules'],
+        moduleDirectory: ['node_modules', './'],
       },
     },
   },
@@ -35,4 +35,5 @@ module.exports = {
       parser: '@typescript-eslint/parser',
     },
   ],
+  ignorePatterns: ['/metro.config.js'],
 }

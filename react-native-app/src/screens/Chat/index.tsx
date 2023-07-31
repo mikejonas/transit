@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { FlatList, View, SafeAreaView } from 'react-native'
+import { FlatList, SafeAreaView } from 'react-native'
 import { useTheme } from '@shopify/restyle'
 import Box from 'components/Box'
 import Button from 'components/Button'
@@ -116,37 +116,32 @@ const ChatScreen: React.FC = () => {
   const lastBotMessage = getLastBotMessage()
 
   return (
-    <View style={{ flex: 1 }}>
-      <Box flex={1} backgroundColor="background">
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <Box marginBottom="m">
-              <ChatMessage
-                item={item}
-                isCursorActive={!!(lastBotMessage && lastBotMessage.id === item.id && isTyping)}
-              />
-            </Box>
-          )}
-          contentContainerStyle={{ padding: theme.spacing.m }}
-        />
-        <SafeAreaView
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            margin: theme.spacing.m,
-          }}>
+    <Box flex={1} backgroundColor="background">
+      <FlatList
+        ref={flatListRef}
+        data={messages}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <Box marginBottom="m">
+            <ChatMessage
+              item={item}
+              isCursorActive={!!(lastBotMessage && lastBotMessage.id === item.id && isTyping)}
+            />
+          </Box>
+        )}
+        contentContainerStyle={{ padding: theme.spacing.m }}
+      />
+      <SafeAreaView>
+        <Box flexDirection="row" alignItems="center" marginHorizontal="m" marginTop="s">
           <Box flex={1}>
             <Input value={message} onChangeText={setMessage} placeholder="Type your message here" />
           </Box>
           <Box marginLeft="s">
             <Button icon="UP_ARROW" onPress={() => submitMockMessage(message)} />
           </Box>
-        </SafeAreaView>
-      </Box>
-    </View>
+        </Box>
+      </SafeAreaView>
+    </Box>
   )
 }
 

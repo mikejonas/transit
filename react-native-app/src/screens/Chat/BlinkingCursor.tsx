@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View } from 'react-native'
+import Box from 'components/Box'
 
 const BlinkingCursor = () => {
   const [showCursor, setShowCursor] = useState(true)
@@ -15,13 +15,11 @@ const BlinkingCursor = () => {
   }, [])
 
   return (
-    <View
-      style={{
-        height: 20, // change this to match your desired cursor height
-        width: 9,
-        backgroundColor: showCursor ? '#888' : 'transparent',
-        alignSelf: 'flex-end',
-      }}
+    <Box
+      height={20}
+      width={9}
+      alignSelf="flex-end"
+      backgroundColor={showCursor ? 'cardSecondaryBackground' : undefined}
     />
   )
 }

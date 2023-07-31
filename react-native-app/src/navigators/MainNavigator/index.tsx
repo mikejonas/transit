@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { Text, StatusBar } from 'react-native'
+import { StatusBar } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
+import Text from 'components/Text'
 import ChatScreen from 'screens/Chat'
 import { darkTheme } from 'theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
@@ -13,6 +14,15 @@ export type StackNavigatorParams = {
 }
 
 const Drawer = createDrawerNavigator<StackNavigatorParams>()
+
+// todo: better handle how to render the label by extracting it its own component
+// todo: better handle font sizes across the app
+const renderLabel = ({ focused, label }: { focused: boolean; label: string }) => (
+  <Text color="text" fontSize={15} fontWeight={focused ? 'bold' : 'normal'}>
+    {label}
+  </Text>
+)
+const DrawerLabel = (label: string) => (props: any) => renderLabel({ ...props, label })
 
 const MainNavigator = () => {
   return (
@@ -35,7 +45,7 @@ const MainNavigator = () => {
           },
           headerTintColor: darkTheme.colors.title,
         }}
-        drawerContent={props => <CustomDrawerContent {...props} />}>
+        drawerContent={CustomDrawerContent}>
         <Drawer.Screen
           name="DailyHoroscope"
           component={ChatScreen}
@@ -45,9 +55,7 @@ const MainNavigator = () => {
               color: 'white',
             },
             // Example of using a custom label component
-            drawerLabel: ({ focused, color }) => (
-              <Text style={{ color, fontWeight: focused ? 'bold' : 'normal' }}>Today</Text>
-            ),
+            drawerLabel: DrawerLabel('Today'),
           }}
         />
         <Drawer.Screen
@@ -59,9 +67,7 @@ const MainNavigator = () => {
               color: 'white',
             },
             // Example of using a custom label component
-            drawerLabel: ({ focused, color }) => (
-              <Text style={{ color, fontWeight: focused ? 'bold' : 'normal' }}>This Week</Text>
-            ),
+            drawerLabel: DrawerLabel('This week'),
           }}
         />
         <Drawer.Screen
@@ -73,9 +79,7 @@ const MainNavigator = () => {
               color: 'white',
             },
             // Example of using a custom label component
-            drawerLabel: ({ focused, color }) => (
-              <Text style={{ color, fontWeight: focused ? 'bold' : 'normal' }}>This Month</Text>
-            ),
+            drawerLabel: DrawerLabel('This month'),
           }}
         />
       </Drawer.Navigator>
