@@ -3,7 +3,7 @@ import { createClient } from "SupabaseClient";
 import { ErrorResponse, SuccessfulResponse } from "../helpers/response.ts";
 import { UserDetailsDatabase } from "../helpers/user_details.ts";
 
-serve(async (req) => {
+serve(async (req: Request) => {
   try {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
@@ -11,9 +11,10 @@ serve(async (req) => {
       global: { headers: { Authorization: req.headers.get("Authorization")! } },
     });
     const user_details_db = new UserDetailsDatabase(supabase);
-    const body = await req.json();
-    const user_id = body.user_id;
-    const user_details = await user_details_db.GetUserDetails(user_id);
+    const { data: { user } } = await supabase.auth.getUser()
+    if(!user) throw new Error("User not found");
+    
+    const user_details = await user_details_db.GetUserDetails(user.id);
     return SuccessfulResponse(JSON.stringify(user_details));
   } catch (error) {
     return ErrorResponse(error.message);
