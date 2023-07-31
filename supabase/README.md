@@ -44,23 +44,11 @@ Link the project (You will need the db password.):
 supabase link --project-ref <project ref key>
 ```
 
-## (Optional) Step 4: Set Up Deno
+## Step 4: Set Up Deno
 
-I think this is optional but you might need to set up Deno to get things to work properly and have correct autocomeplete.
+Set up Deno to get things to work properly and have correct autocomeplete.
 
 Install the [Deno extension](https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno) in Visual Studio.
-
-In the command pallet search `Deno: Initialize Workspace Configuration` and follow the prompts.
-
-Inside of `.vscode/settings.json` (if you added this) you'll likely want a similar set up to this:
-```json
-{
-    "deno.enable": true,
-    "deno.unstable": true,
-    "deno.lint": true,
-    // This is the main part that helps with linking files.
-    "deno.importMap": "./supabase/functions/import_map.json"
-}
 ```
 
 ## Step 5: Run Supabase Locally
