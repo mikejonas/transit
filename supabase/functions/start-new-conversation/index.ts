@@ -10,10 +10,13 @@ serve(async (req) => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
       global: { headers: { Authorization: req.headers.get("Authorization")! } },
     });
-    const body = await req.json();
-    const user_id = body.user_id;
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if(!user) throw new Error("User not found");
+
     const conversation = new Conversations(supabase);
-    const message = await conversation.StartNewConversation(user_id);
+    const message = await conversation.StartNewConversation(user.id);
+
     return SuccessfulResponse(JSON.stringify(message));
   } catch (error) {
     return ErrorResponse(error.message);
