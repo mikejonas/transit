@@ -1,0 +1,26 @@
+// These settings are used when opening the workspace in VS Code
+{
+  "folders": [
+    {
+      "name": "project-root",
+      "path": "./"
+    },
+    {
+      "name": "react-native-app",
+      "path": "react-native-app"
+    },
+    {
+      "name": "supabase-functions",
+      "path": "supabase/functions"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      // disable displaying these folders from the project-root directory
+      "node_modules/": true,
+      "react-native-app/": true,
+      "supabase/functions/": true
+    },
+    "deno.importMap": "./supabase/functions/import_map.json"
+  }
+}
