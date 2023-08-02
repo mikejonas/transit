@@ -7,16 +7,9 @@ import Button from 'components/Button'
 import Input from 'components/Input'
 import { Theme } from 'theme/restyle'
 import supabase from 'utils/supabaseClient'
-import ChatMessage from './ChatMessage'
+import ChatMessage from './components/ChatMessage'
+import { MOCK_ASSISTANT_MESSAGE, Message, makeUserSubmittedMessage } from './utils'
 
-export interface Message {
-  message_id: number
-  conversation_id: number
-  content: string
-  created_at: string
-  role: string
-  user_id: string
-}
 /**
  * This is a rough hacked together version of chat ui. It would need to be cleaned up to build upon
  */
@@ -25,22 +18,8 @@ const ChatScreen: React.FC = () => {
   const theme = useTheme<Theme>()
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
-  const typingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const [hasDataInitialized, setHasDataInitialized] = useState(false)
   const flatListRef = useRef<FlatList>(null)
-  // has screen loaded with all its data
-  const [hasScreenInitialized, setHasScreenInitialized] = useState(false)
-  // const [isLoading, sethasScreenInitialized] = useState(false)
-
-  const USER_ROLE = 'user'
-  const ASSISTANT_ROLE = 'assistant '
-
-  const DATA = {
-    content: 'Yoo',
-    conversation_id: 50,
-    message_id: 99,
-    role: ASSISTANT_ROLE,
-    user_id: 'b5cb1809-7ff4-43e7-89eb-164c10df48be',
-  }
 
   const getMessages = async () => {
     const { data, error } = await supabase.from('Messages').select(`
@@ -54,35 +33,45 @@ const ChatScreen: React.FC = () => {
     if (error) console.error(error)
 
     setMessages(data as Message[])
-    setHasScreenInitialized(true)
+    setHasDataInitialized(true)
   }
 
   useEffect(() => {
-    // get messages on initial load
     getMessages()
   }, [])
 
   useEffect(() => {
     if (messages.length > 0) {
-      // scroll to bottom when new message is added
       scrollToBottom()
     }
   }, [messages])
 
-  const postMessage = async (new_message: string) => {
+  const postMessage = async (newMessage: string) => {
+    // TODO don't allow empty messages
+    if (newMessage === '') return
     setMessage('')
-    // TODO add this back.
-    // const { data, error } = await supabase.functions.invoke('add-message', {
-    //   body: JSON.stringify({ new_message, conversation_id: messages[0].conversation_id }),
-    // })
-    // console.log(data)
-    // respond after 1 second
-    setTimeout(() => {
-      addBotResponse(DATA as Message)
-    }, 1000)
+    // TODO fix this, it should not be an if statement
+    if (messages[0].conversation_id) {
+      addUserMessage(
+        makeUserSubmittedMessage(newMessage, messages[messages.length - 1].message_id + 1),
+      )
+    }
+
+    const { data, error } = await supabase.functions.invoke('add-message', {
+      body: JSON.stringify({
+        new_message: newMessage,
+        conversation_id: messages[0].conversation_id,
+      }),
+    })
+    if (error) throw error
+    addBotResponse(data)
   }
 
   const addBotResponse = (botMessage: Message) => {
+    setMessages(previousMessages => [...previousMessages, botMessage])
+  }
+
+  const addUserMessage = (botMessage: Message) => {
     setMessages(previousMessages => [...previousMessages, botMessage])
   }
 
@@ -91,25 +80,16 @@ const ChatScreen: React.FC = () => {
 
     InteractionManager.runAfterInteractions(() => {
       flatListRef.current?.scrollToIndex({
-        animated: !hasScreenInitialized,
+        animated: !hasDataInitialized,
         index: lastMessageIndex,
       })
     })
   }
 
-  useEffect(() => {
-    // Clear typing interval on component unmount
-    return () => {
-      if (typingIntervalRef.current) {
-        clearInterval(typingIntervalRef.current)
-      }
-    }
-  }, [])
-
   const onScrollToIndexFailed = (info: { index: number }) => {
     const wait = new Promise(resolve => setTimeout(resolve, 100))
     wait.then(() => {
-      flatListRef.current?.scrollToIndex({ index: info.index, animated: !hasScreenInitialized })
+      flatListRef.current?.scrollToIndex({ index: info.index, animated: !hasDataInitialized })
     })
   }
 
@@ -121,7 +101,7 @@ const ChatScreen: React.FC = () => {
         keyExtractor={item => item.message_id}
         renderItem={({ item }) => (
           <Box marginBottom="m">
-            <ChatMessage message={item} />
+            <ChatMessage messageRole={item.role} messageContent={item.content} />
           </Box>
         )}
         contentContainerStyle={{ padding: theme.spacing.m }}
