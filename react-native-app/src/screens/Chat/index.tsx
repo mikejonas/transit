@@ -1,22 +1,21 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { FlatList, SafeAreaView } from 'react-native'
+import { InteractionManager } from 'react-native'
 import { useTheme } from '@shopify/restyle'
 import Box from 'components/Box'
 import Button from 'components/Button'
 import Input from 'components/Input'
 import { Theme } from 'theme/restyle'
+import supabase from 'utils/supabaseClient'
 import ChatMessage from './ChatMessage'
-import { botReply, mockBot, mockMessages, mockUser } from './mockMessages'
-
-interface User {
-  avatar: string
-  name: string
-}
 
 export interface Message {
-  id: string
-  text: string
-  user: User
+  message_id: number
+  conversation_id: number
+  content: string
+  created_at: string
+  role: string
+  user_id: string
 }
 /**
  * This is a rough hacked together version of chat ui. It would need to be cleaned up to build upon
@@ -25,74 +24,77 @@ export interface Message {
 const ChatScreen: React.FC = () => {
   const theme = useTheme<Theme>()
   const [message, setMessage] = useState('')
-  const [isTyping, setIsTyping] = useState(false) // New state to track whether the bot is typing
-  const [messages, setMessages] = useState<Message[]>(mockMessages)
+  const [messages, setMessages] = useState<Message[]>([])
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const flatListRef = useRef<FlatList>(null)
+  // has screen loaded with all its data
+  const [hasScreenInitialized, setHasScreenInitialized] = useState(false)
+  // const [isLoading, sethasScreenInitialized] = useState(false)
 
-  const createNewMessage = (id: number, text: string, user: User): Message => ({
-    id: id.toString(),
-    text,
-    user,
-  })
+  const USER_ROLE = 'user'
+  const ASSISTANT_ROLE = 'assistant '
 
-  const scrollToBottom = () => {
-    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 0)
+  const DATA = {
+    content: 'Yoo',
+    conversation_id: 50,
+    message_id: 99,
+    role: ASSISTANT_ROLE,
+    user_id: 'b5cb1809-7ff4-43e7-89eb-164c10df48be',
   }
 
-  const simulateTyping = useCallback((initialIndex = 0, typingSpeed = 4) => {
-    let i = initialIndex
-    setIsTyping(true)
+  const getMessages = async () => {
+    const { data, error } = await supabase.from('Messages').select(`
+      conversation_id,
+      message_id,
+      role,
+      created_at,
+      content,
+      user_id
+    `)
+    if (error) console.error(error)
 
-    // Adding 2 second delay before typing
-    setTimeout(() => {
-      typingIntervalRef.current = setInterval(() => {
-        if (i < botReply.length) {
-          setMessages(previousMessages => {
-            const lastMessage = previousMessages[previousMessages.length - 1]
-            const newText = lastMessage.text + botReply.substring(i, i + typingSpeed)
-            const updatedMessage = { ...lastMessage, text: newText }
+    setMessages(data as Message[])
+    setHasScreenInitialized(true)
+  }
 
-            const updatedMessages = [...previousMessages.slice(0, -1), updatedMessage]
-
-            scrollToBottom()
-            return updatedMessages
-          })
-
-          i += typingSpeed
-        } else {
-          if (typingIntervalRef.current) {
-            clearInterval(typingIntervalRef.current)
-            typingIntervalRef.current = null
-            setIsTyping(false)
-            setMessages(previousMessages => {
-              const lastMessage = previousMessages[previousMessages.length - 1]
-              const updatedMessage = { ...lastMessage }
-
-              const updatedMessages = [...previousMessages.slice(0, -1), updatedMessage]
-              scrollToBottom()
-              return updatedMessages
-            })
-          }
-        }
-      }, 40)
-    }, 2000)
+  useEffect(() => {
+    // get messages on initial load
+    getMessages()
   }, [])
 
-  const submitMockMessage = (mockMessageText: string) => {
-    setMessage('')
-    const lastMessageId = Number(messages[messages.length - 1].id)
-    setMessages(previousMessages => {
-      const newMessages = [
-        ...previousMessages,
-        createNewMessage(lastMessageId + 1, mockMessageText, mockUser),
-        createNewMessage(lastMessageId + 2, '', mockBot),
-      ]
-      scrollToBottom() // We call scrollToBottom here after a new message is added
-      return newMessages
-    })
+  useEffect(() => {
+    if (messages.length > 0) {
+      // scroll to bottom when new message is added
+      scrollToBottom()
+    }
+  }, [messages])
 
-    simulateTyping()
+  const postMessage = async (new_message: string) => {
+    setMessage('')
+    // TODO add this back.
+    // const { data, error } = await supabase.functions.invoke('add-message', {
+    //   body: JSON.stringify({ new_message, conversation_id: messages[0].conversation_id }),
+    // })
+    // console.log(data)
+    // respond after 1 second
+    setTimeout(() => {
+      addBotResponse(DATA as Message)
+    }, 1000)
+  }
+
+  const addBotResponse = (botMessage: Message) => {
+    setMessages(previousMessages => [...previousMessages, botMessage])
+  }
+
+  const scrollToBottom = () => {
+    const lastMessageIndex = messages.length - 1
+
+    InteractionManager.runAfterInteractions(() => {
+      flatListRef.current?.scrollToIndex({
+        animated: !hasScreenInitialized,
+        index: lastMessageIndex,
+      })
+    })
   }
 
   useEffect(() => {
@@ -104,32 +106,26 @@ const ChatScreen: React.FC = () => {
     }
   }, [])
 
-  const getLastBotMessage = () => {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      if (messages[i].user === mockBot) {
-        return messages[i]
-      }
-    }
-    return null
+  const onScrollToIndexFailed = (info: { index: number }) => {
+    const wait = new Promise(resolve => setTimeout(resolve, 100))
+    wait.then(() => {
+      flatListRef.current?.scrollToIndex({ index: info.index, animated: !hasScreenInitialized })
+    })
   }
-
-  const lastBotMessage = getLastBotMessage()
 
   return (
     <Box flex={1} backgroundColor="background">
       <FlatList
         ref={flatListRef}
         data={messages}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.message_id}
         renderItem={({ item }) => (
           <Box marginBottom="m">
-            <ChatMessage
-              item={item}
-              isCursorActive={!!(lastBotMessage && lastBotMessage.id === item.id && isTyping)}
-            />
+            <ChatMessage message={item} />
           </Box>
         )}
         contentContainerStyle={{ padding: theme.spacing.m }}
+        onScrollToIndexFailed={onScrollToIndexFailed}
       />
       <SafeAreaView>
         <Box flexDirection="row" alignItems="center" marginHorizontal="m" marginTop="s">
@@ -137,7 +133,7 @@ const ChatScreen: React.FC = () => {
             <Input value={message} onChangeText={setMessage} placeholder="Type your message here" />
           </Box>
           <Box marginLeft="s">
-            <Button icon="UP_ARROW" onPress={() => submitMockMessage(message)} />
+            <Button icon="UP_ARROW" onPress={() => postMessage(message)} />
           </Box>
         </Box>
       </SafeAreaView>

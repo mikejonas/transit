@@ -12,6 +12,12 @@ export const mockUser = {
   avatar: 'https://api.dicebear.com/6.x/avataaars/png?seed=P3uffewe',
 }
 
+export const avatars = {
+  system: 'https://api.dicebear.com/6.x/bottts/png?seed=Grlae',
+  assistant: 'https://api.dicebear.com/6.x/bottts/png?seed=Grlae',
+  user: 'https://api.dicebear.com/6.x/avataaars/png?seed=assistant',
+}
+
 export const mockBot = {
   name: 'Bot',
   avatar:
@@ -20,18 +26,29 @@ export const mockBot = {
 
 export const mockMessages: Message[] = [
   {
-    id: '1',
-    text: 'This week you may experience a surge of mental energy and curiosity.  Your mind will be sharp and agile, allowing you to excel in communication and problem solving. It’s a great day to engage in intellectual pursuits, have meaningful conversations, and express your ideas with confidence. However, be mindful of overthinking or scattering your energy in too many directions. Focus on prioritizing your tasks and maintaining a balanced approach to make the most of this intellectual stimulating day.',
-    user: mockBot,
+    content: 'You are an astrologer who specializes in reading horoscopes.',
+    conversation_id: 50,
+    created_at: '2023-07-31T11:19:54.905995+00:00',
+    message_id: 92,
+    role: 'system',
+    user_id: 'b5cb1809-7ff4-43e7-89eb-164c10df48be',
   },
   {
-    id: '2',
-    text: 'Tell me more about my financial horoscope',
-    user: mockUser,
+    content:
+      'In one paragraph, tell me what my horoscope is on Mon Jul 31 2023 given that my sign is Taurus.',
+    conversation_id: 50,
+    created_at: '2023-07-31T11:19:54.907898+00:00',
+    message_id: 93,
+    role: 'user',
+    user_id: 'b5cb1809-7ff4-43e7-89eb-164c10df48be',
   },
   {
-    id: '3',
-    text: 'In terms of your financial horoscope, you may find that your communication skills and adaptability play a significant role in your financial success. Your ability to',
-    user: mockBot,
+    content:
+      'On Monday, July 31, 2023, as a Taurus, your horoscope indicates a strong focus on your career and professional life. The energy of the day encourages you to take charge and make ambitious strides towards your goals. Your determination and perseverance will pay off as you make significant progress towards your long-term objectives. This is also a favorable time to seek recognition and to showcase your talents and abilities. Your hard work and dedication will not go unnoticed, and you may receive praise or even a promotion. Remember to stay grounded and remain open to constructive feedback, as it will ultimately help you grow and evolve in your professional journey.',
+    conversation_id: 50,
+    created_at: '2023-07-31T11:20:00.415168+00:00',
+    message_id: 94,
+    role: 'assistant',
+    user_id: 'b5cb1809-7ff4-43e7-89eb-164c10df48be',
   },
 ]

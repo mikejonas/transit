@@ -4,31 +4,31 @@ import Box from 'components/Box'
 import Text from 'components/Text'
 import { Message } from '.'
 import BlinkingCursor from './BlinkingCursor'
+import { avatars } from './mockMessages'
 
 const avatarSize = 25
 const marginLeftSize = 's' // Corresponding to your theme spacing value
 
 const ChatMessage: React.FC<{
-  item: Message
+  message: Message
   isCursorActive?: Boolean
-}> = ({ item, isCursorActive }) => (
+}> = ({ message, isCursorActive }) => (
   <Box>
     <Box flexDirection="row" alignItems="center">
       <Image
-        source={{ uri: item.user.avatar }}
+        source={{ uri: avatars[message.role] }}
         style={{
           width: avatarSize,
           height: avatarSize,
           borderRadius: avatarSize / 2,
         }}
       />
-      <Box marginLeft={marginLeftSize}>
-        <Text variant="body">{item.user.name}</Text>
-      </Box>
+      <Box marginLeft={marginLeftSize} />
+      <Text variant="body">{message.role}</Text>
     </Box>
     <Box style={{ marginLeft: avatarSize + 8 }}>
       <Text variant="body">
-        {item.text} {isCursorActive && <BlinkingCursor />}
+        {message.content} {isCursorActive && <BlinkingCursor />}
       </Text>
     </Box>
   </Box>
