@@ -3,11 +3,10 @@ import { Image } from 'react-native'
 import Box from 'components/Box'
 import Text from 'components/Text'
 import BlinkingCursor from './BlinkingCursor'
-import { avatars } from '../mockMessages'
-import { Message } from '../utils'
+import { TEMP_AVATARS } from '../utils'
 
 const avatarSize = 25
-const marginLeftSize = 's' // Corresponding to your theme spacing value
+const marginLeftSize = 's'
 
 const ChatMessage: React.FC<{
   messageRole: 'user' | 'assistant'
@@ -16,7 +15,7 @@ const ChatMessage: React.FC<{
   const renderMessageHeader = () => (
     <Box flexDirection="row">
       <Image
-        source={{ uri: avatars[messageRole] }}
+        source={{ uri: TEMP_AVATARS[messageRole] }}
         style={{
           width: avatarSize,
           height: avatarSize,

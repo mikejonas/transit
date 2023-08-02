@@ -12,7 +12,6 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/no-unused-vars': 'warn',
-    // exhaustive-deps is too strict for now. We can enable it later if bugs pop up
     'react-hooks/exhaustive-deps': 'off',
     'import/order': [
       'error',

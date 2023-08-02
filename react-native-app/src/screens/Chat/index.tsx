@@ -8,7 +8,12 @@ import Input from 'components/Input'
 import { Theme } from 'theme/restyle'
 import supabase from 'utils/supabaseClient'
 import ChatMessage from './components/ChatMessage'
-import { MOCK_ASSISTANT_MESSAGE, Message, makeUserSubmittedMessage } from './utils'
+import {
+  // MOCK_ASSISTANT_MESSAGE,
+  Message,
+  makeTemporaryBotResponse,
+  makeUserSubmittedMessage,
+} from './utils'
 
 /**
  * This is a rough hacked together version of chat ui. It would need to be cleaned up to build upon
@@ -16,23 +21,29 @@ import { MOCK_ASSISTANT_MESSAGE, Message, makeUserSubmittedMessage } from './uti
 
 const ChatScreen: React.FC = () => {
   const theme = useTheme<Theme>()
-  const [message, setMessage] = useState('')
+  const [inputText, setInputText] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [hasDataInitialized, setHasDataInitialized] = useState(false)
   const flatListRef = useRef<FlatList>(null)
 
   const getMessages = async () => {
-    const { data, error } = await supabase.from('Messages').select(`
+    const { data, error } = await supabase
+      .from('Messages')
+      .select(
+        `
       conversation_id,
       message_id,
       role,
       created_at,
       content,
       user_id
-    `)
+    `,
+      )
+      .limit(10)
+      .order('created_at', { ascending: false })
     if (error) console.error(error)
 
-    setMessages(data as Message[])
+    setMessages(data?.reverse() as Message[])
     setHasDataInitialized(true)
   }
 
@@ -47,15 +58,12 @@ const ChatScreen: React.FC = () => {
   }, [messages])
 
   const postMessage = async (newMessage: string) => {
-    // TODO don't allow empty messages
     if (newMessage === '') return
-    setMessage('')
-    // TODO fix this, it should not be an if statement
-    if (messages[0].conversation_id) {
-      addUserMessage(
-        makeUserSubmittedMessage(newMessage, messages[messages.length - 1].message_id + 1),
-      )
-    }
+    setInputText('')
+
+    const lastMessageId = messages[messages.length - 1].message_id
+    addUserMessage(makeUserSubmittedMessage(newMessage, lastMessageId + 1))
+    addTemporaryResponse()
 
     const { data, error } = await supabase.functions.invoke('add-message', {
       body: JSON.stringify({
@@ -63,12 +71,23 @@ const ChatScreen: React.FC = () => {
         conversation_id: messages[0].conversation_id,
       }),
     })
+
     if (error) throw error
-    addBotResponse(data)
+    replaceTemporaryResponseWithBotResponse(data)
   }
 
-  const addBotResponse = (botMessage: Message) => {
-    setMessages(previousMessages => [...previousMessages, botMessage])
+  const TEMP_MESSAGE_ID = 999999999
+
+  const addTemporaryResponse = () => {
+    const tempMessage = makeTemporaryBotResponse(TEMP_MESSAGE_ID)
+    setMessages(previousMessages => [...previousMessages, tempMessage])
+  }
+
+  const replaceTemporaryResponseWithBotResponse = (botMessage: Message) => {
+    setMessages(previousMessages => [
+      ...previousMessages.filter(message => message.message_id !== TEMP_MESSAGE_ID),
+      botMessage,
+    ])
   }
 
   const addUserMessage = (botMessage: Message) => {
@@ -79,10 +98,12 @@ const ChatScreen: React.FC = () => {
     const lastMessageIndex = messages.length - 1
 
     InteractionManager.runAfterInteractions(() => {
-      flatListRef.current?.scrollToIndex({
-        animated: !hasDataInitialized,
-        index: lastMessageIndex,
-      })
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          animated: !hasDataInitialized,
+          index: lastMessageIndex,
+        })
+      }, 100)
     })
   }
 
@@ -110,10 +131,14 @@ const ChatScreen: React.FC = () => {
       <SafeAreaView>
         <Box flexDirection="row" alignItems="center" marginHorizontal="m" marginTop="s">
           <Box flex={1}>
-            <Input value={message} onChangeText={setMessage} placeholder="Type your message here" />
+            <Input
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Type your message here"
+            />
           </Box>
           <Box marginLeft="s">
-            <Button icon="UP_ARROW" onPress={() => postMessage(message)} />
+            <Button icon="UP_ARROW" onPress={() => postMessage(inputText)} />
           </Box>
         </Box>
       </SafeAreaView>
