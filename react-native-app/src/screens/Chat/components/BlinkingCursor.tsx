@@ -18,7 +18,6 @@ const BlinkingCursor = () => {
     <Box
       height={20}
       width={9}
-      alignSelf="flex-end"
       backgroundColor={showCursor ? 'cardSecondaryBackground' : undefined}
     />
   )

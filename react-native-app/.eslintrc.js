@@ -11,6 +11,8 @@ module.exports = {
     },
   },
   rules: {
+    '@typescript-eslint/no-unused-vars': 'warn',
+    'react-hooks/exhaustive-deps': 'off',
     'import/order': [
       'error',
       {
