@@ -4,7 +4,7 @@ import Button from 'components/Button'
 import Input from 'components/Input'
 import Text from 'components/Text'
 import Textbutton from 'components/TextButton'
-import supabaseClient from 'utils/supabaseClient'
+import { requests } from 'requests'
 
 const Auth = () => {
   const [email, setEmail] = useState('')
@@ -15,7 +15,7 @@ const Auth = () => {
   const handleSubmit = async () => {
     setLoading(true)
     if (isSignUp) {
-      const { error } = await supabaseClient.auth.signUp({
+      const { error } = await requests.auth.signUp({
         email,
         password,
       })
@@ -24,7 +24,7 @@ const Auth = () => {
         console.log(error)
       }
     } else {
-      const { error } = await supabaseClient.auth.signInWithPassword({
+      const { error } = await requests.auth.signInWithPassword({
         email,
         password,
       })

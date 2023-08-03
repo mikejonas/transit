@@ -5,10 +5,10 @@ import { StackNavigationProp, createStackNavigator } from '@react-navigation/sta
 import { useTheme } from '@shopify/restyle'
 import { Session } from '@supabase/supabase-js'
 import MainNavigator from 'navigators/MainNavigator'
+import { requests } from 'requests'
 import Auth from 'screens/Auth'
 import InitialLoadingScreen from 'screens/InitialLoading'
 import { Theme } from 'theme/restyle'
-import supabaseClient from 'utils/supabaseClient'
 
 export type StackNavigatorParams = {
   Auth: undefined
@@ -27,15 +27,13 @@ const AppNavigator = () => {
 
   useEffect(() => {
     const fetchSession = async () => {
-      const session = await supabaseClient.auth.getSession()
+      const session = await requests.auth.getSession()
       setSessionObject(session.data.session)
       setIsSessionInitialized(false)
     }
-    const { data: subscription } = supabaseClient.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSessionObject(session)
-      },
-    )
+    const { data: subscription } = requests.auth.onAuthStateChange(async (_event, session) => {
+      setSessionObject(session)
+    })
 
     fetchSession()
 
