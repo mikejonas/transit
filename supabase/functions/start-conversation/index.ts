@@ -14,8 +14,11 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser()
     if(!user) throw new Error("User not found");
 
+    const body = await req.json();
+    const conversation_id = body.conversation_id;
+
     const conversations = new Conversations(supabase);
-    const message = await conversations.StartConversation(user.id);
+    const message = await conversations.StartConversation(conversation_id, user.id);
 
     return SuccessfulResponse(JSON.stringify(message));
   } catch (error) {

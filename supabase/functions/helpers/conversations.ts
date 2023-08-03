@@ -48,26 +48,20 @@ class Conversations {
   }
 
   // Returns a single message that is the initial response from the assistant.
-  public async StartConversation(user_id: string): Promise<Message> {
+  public async StartConversation(
+    conversation_id: number,
+    user_id: string,
+  ): Promise<Message> {
     if (!await this.user_details_db.DoesUserExist(user_id)) {
       throw new Error(
         "Cannot start new conversation for a user that does not exist.",
       );
     }
-    const { data, error } = await this.supabase
-      .from("Conversations")
-      .insert([
-        {
-          user_id: user_id,
-        },
-      ]).select();
-    if (error) {
-      throw new Error(error.message);
+    if (!await this.DoesConversationExist(conversation_id)) {
+      throw new Error(
+        "Conversation does not exist. You must start a new conversation first.",
+      );
     }
-    if (data.length !== 1) {
-      throw new Error("Unable to start new conversation. Unexpected data.");
-    }
-    const conversation_id = data[0].conversation_id;
     const message = await this.GetFirstMessage(
       conversation_id,
       user_id,
