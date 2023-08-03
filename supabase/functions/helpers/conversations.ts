@@ -4,6 +4,11 @@ import { Message, Messages } from "./messages.ts";
 import { OpenAI } from "OpenAi";
 import { GetSunSign } from "./astrology.ts";
 
+interface Conversation {
+  conversation_id: number;
+  user_id: string;
+}
+
 class Conversations {
   supabase: SupabaseClient;
   user_details_db: UserDetailsDatabase;
@@ -15,7 +20,35 @@ class Conversations {
     this.messages_db = new Messages(supabase);
   }
 
-  public async StartNewConversation(user_id: string): Promise<Message> {
+  // Inserts a new conversation row into the conversation table. Does not change the messages table.
+  public async NewConversation(user_id: string): Promise<Conversation> {
+    if (!await this.user_details_db.DoesUserExist(user_id)) {
+      throw new Error(
+        "Cannot start new conversation for a user that does not exist.",
+      );
+    }
+    const { data, error } = await this.supabase
+      .from("Conversations")
+      .insert([
+        {
+          user_id: user_id,
+        },
+      ]).select();
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (data.length !== 1) {
+      throw new Error("Unable to start new conversation. Unexpected data.");
+    }
+    const conversation: Conversation = {
+      conversation_id: data[0].conversation_id,
+      user_id: data[0].user_id,
+    };
+    return conversation;
+  }
+
+  // Returns a single message that is the initial response from the assistant.
+  public async StartConversation(user_id: string): Promise<Message> {
     if (!await this.user_details_db.DoesUserExist(user_id)) {
       throw new Error(
         "Cannot start new conversation for a user that does not exist.",
@@ -149,3 +182,4 @@ class Conversations {
 }
 
 export { Conversations };
+export type { Conversation };
