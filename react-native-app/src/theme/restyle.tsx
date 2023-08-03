@@ -10,7 +10,7 @@ const palette = {
   vibrantPurple: '#8530C8',
   black: '#000000',
   lightGrey: '#d7dadf',
-  red: '#FF0000',
+  red: '#ff5353',
 }
 
 // default theme structure. Modify colors in the exported themes below
