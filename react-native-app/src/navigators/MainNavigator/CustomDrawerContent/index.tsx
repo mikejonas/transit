@@ -6,11 +6,11 @@ import {
   DrawerContentComponentProps,
 } from '@react-navigation/drawer'
 import TextButton from 'components/TextButton'
-import supabaseClient from 'utils/supabaseClient'
+import { requests } from 'requests'
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const handleSignOut = async () => {
-    const { error } = await supabaseClient.auth.signOut()
+    const { error } = await requests.auth.signOut()
     if (error) {
       console.log(error)
     }

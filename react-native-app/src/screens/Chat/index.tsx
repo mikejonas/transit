@@ -5,8 +5,8 @@ import { useTheme } from '@shopify/restyle'
 import Box from 'components/Box'
 import Button from 'components/Button'
 import Input from 'components/Input'
+import { requests } from 'requests'
 import { Theme } from 'theme/restyle'
-import supabase from 'utils/supabaseClient'
 import ChatMessage from './components/ChatMessage'
 import {
   // MOCK_ASSISTANT_MESSAGE,
@@ -27,21 +27,7 @@ const ChatScreen: React.FC = () => {
   const flatListRef = useRef<FlatList>(null)
 
   const getMessages = async () => {
-    const { data, error } = await supabase
-      .from('Messages')
-      .select(
-        `
-      conversation_id,
-      message_id,
-      role,
-      created_at,
-      content,
-      user_id
-    `,
-      )
-      .limit(10)
-      .order('created_at', { ascending: false })
-    if (error) console.error(error)
+    const { data } = await requests.generated.getMessages()
 
     setMessages(data?.reverse() as Message[])
     setHasDataInitialized(true)
@@ -59,17 +45,25 @@ const ChatScreen: React.FC = () => {
 
   const postMessage = async (newMessage: string) => {
     if (newMessage === '') return
-    setInputText('')
 
     const lastMessageId = messages[messages.length - 1].message_id
+    const conversationId = messages[0]!.conversation_id
+
+    if (lastMessageId === undefined || conversationId === undefined) {
+      console.error('lastMessageId or conversationId is undefined', {
+        lastMessageId,
+        conversationId,
+      })
+      return
+    }
+
+    setInputText('')
     addUserMessage(makeUserSubmittedMessage(newMessage, lastMessageId + 1))
     addTemporaryResponse()
 
-    const { data, error } = await supabase.functions.invoke('add-message', {
-      body: JSON.stringify({
-        new_message: newMessage,
-        conversation_id: messages[0].conversation_id,
-      }),
+    const { data, error } = await requests.edgeFunctions.addMessage({
+      newMessage: newMessage,
+      conversationId,
     })
 
     if (error) throw error
