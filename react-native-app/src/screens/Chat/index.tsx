@@ -22,31 +22,33 @@ import {
 const ChatScreen: React.FC = () => {
   const theme = useTheme<Theme>()
   const [inputText, setInputText] = useState('')
-  const [conversationId, setConversationId] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [hasDataInitialized, setHasDataInitialized] = useState(false)
   const flatListRef = useRef<FlatList>(null)
 
-  const startNewConversation = async () => {
-    const { data: newConversationData, error: newConversationError } =
-      await supabase.functions.invoke('new-conversation')
-    if (newConversationError) console.error(newConversationError)
-    setConversationId(newConversationData?.conversation_id)
+  const getMessages = async () => {
+    const { data, error } = await supabase
+      .from('Messages')
+      .select(
+        `
+      conversation_id,
+      message_id,
+      role,
+      created_at,
+      content,
+      user_id
+    `,
+      )
+      .limit(10)
+      .order('created_at', { ascending: false })
+    if (error) console.error(error)
 
-    const { data: startConversationData, error: startConversationError } =
-      await supabase.functions.invoke('start-conversation', {
-        body: JSON.stringify({
-          conversation_id: conversationId,
-        }),
-      })
-    if (startConversationError) console.error(startConversationError)
-    const initialMessage: Message[] = [startConversationData]
-    setMessages(initialMessage)
+    setMessages(data?.reverse() as Message[])
     setHasDataInitialized(true)
   }
 
   useEffect(() => {
-    startNewConversation()
+    getMessages()
   }, [])
 
   useEffect(() => {
