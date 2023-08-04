@@ -43,6 +43,7 @@ class UserDetailsDatabase {
           user_id: user_details.user_id,
           name: user_details.name,
           birth_date: user_details.birth_date,
+          birth_time: user_details.birth_time,
         },
       ]);
     if (error) {

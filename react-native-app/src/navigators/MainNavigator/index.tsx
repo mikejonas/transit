@@ -1,9 +1,11 @@
 import * as React from 'react'
+import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { RouteProp } from '@react-navigation/native'
 import Text from 'components/Text'
 import { StackNavigatorParams } from 'navigators/AppNavigator'
+import { requests } from 'requests'
 import ChatScreen from 'screens/Chat'
 import { darkTheme } from 'theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
@@ -11,11 +13,10 @@ import CustomDrawerContent from './CustomDrawerContent'
 export type MainNavigatorProps = {
   route: RouteProp<StackNavigatorParams, 'MainNavigator'>
 }
-
 export type DrawerNavigatorParams = {
-  DailyHoroscope: undefined
-  WeeklyHoroscope: undefined
-  MonthlyHoroscope: undefined
+  DailyHoroscope: { conversationId?: number }
+  WeeklyHoroscope: { conversationId?: number }
+  MonthlyHoroscope: { conversationId?: number }
 }
 
 const Drawer = createDrawerNavigator<DrawerNavigatorParams>()
@@ -29,7 +30,29 @@ const renderLabel = ({ focused, label }: { focused: boolean; label: string }) =>
 )
 const DrawerLabel = (label: string) => (props: any) => renderLabel({ ...props, label })
 
-const MainNavigator: React.FC<MainNavigatorProps> = ({ route }) => {
+const MainNavigator: React.FC<MainNavigatorProps> = () => {
+  const [conversationId, setConversationId] = React.useState<number | undefined>()
+
+  const getOrCreateConversation = async () => {
+    const { data, error } = await requests.generated.getConversation()
+    if (data) {
+      // get conversation
+      setConversationId(data.conversation_id)
+    } else {
+      // create conversation
+      const { data: newData, error: newError } = await requests.edgeFunctions.newConversation()
+      if (newData) setConversationId(newData.conversation_id)
+      if (newError) console.log({ newError })
+    }
+    if (error) console.log({ error })
+  }
+
+  useEffect(() => {
+    getOrCreateConversation()
+  }, [])
+
+  if (!conversationId) return null
+
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -54,6 +77,7 @@ const MainNavigator: React.FC<MainNavigatorProps> = ({ route }) => {
         <Drawer.Screen
           name="DailyHoroscope"
           component={ChatScreen}
+          initialParams={{ conversationId }}
           options={{
             headerTitle: 'Today',
             headerTitleStyle: {
@@ -66,6 +90,7 @@ const MainNavigator: React.FC<MainNavigatorProps> = ({ route }) => {
         <Drawer.Screen
           name="WeeklyHoroscope"
           component={ChatScreen}
+          initialParams={{ conversationId }}
           options={{
             headerTitle: 'This Week',
             headerTitleStyle: {
@@ -78,6 +103,7 @@ const MainNavigator: React.FC<MainNavigatorProps> = ({ route }) => {
         <Drawer.Screen
           name="MonthlyHoroscope"
           component={ChatScreen}
+          initialParams={{ conversationId }}
           options={{
             headerTitle: 'This Month',
             headerTitleStyle: {
