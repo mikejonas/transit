@@ -10,11 +10,9 @@ import { requests } from 'requests'
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const handleSignOut = async () => {
-    const { error } = await requests.auth.signOut()
-    if (error) {
-      console.log(error)
-    }
+    await requests.auth.signOut()
   }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>

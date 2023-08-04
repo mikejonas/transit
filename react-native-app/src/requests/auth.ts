@@ -30,12 +30,6 @@ export const authRequests = {
 
     return response
   },
-  getSession: async () => {
-    const response = await supabaseClient.auth.getSession()
-    if (response.error) console.error('Error getting session:', response.error.message)
-
-    return response
-  },
   onAuthStateChange: (callback: (event: any, session: any) => void) => {
     return supabaseClient.auth.onAuthStateChange(callback)
   },

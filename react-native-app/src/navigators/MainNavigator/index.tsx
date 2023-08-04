@@ -1,19 +1,24 @@
 import * as React from 'react'
 import { StatusBar } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
+import { RouteProp } from '@react-navigation/native'
 import Text from 'components/Text'
+import { StackNavigatorParams } from 'navigators/AppNavigator'
 import ChatScreen from 'screens/Chat'
 import { darkTheme } from 'theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
 
-export type StackNavigatorParams = {
+export type MainNavigatorProps = {
+  route: RouteProp<StackNavigatorParams, 'MainNavigator'>
+}
+
+export type DrawerNavigatorParams = {
   DailyHoroscope: undefined
   WeeklyHoroscope: undefined
   MonthlyHoroscope: undefined
-  Logout: undefined
 }
 
-const Drawer = createDrawerNavigator<StackNavigatorParams>()
+const Drawer = createDrawerNavigator<DrawerNavigatorParams>()
 
 // todo: better handle how to render the label by extracting it its own component
 // todo: better handle font sizes across the app
@@ -24,7 +29,7 @@ const renderLabel = ({ focused, label }: { focused: boolean; label: string }) =>
 )
 const DrawerLabel = (label: string) => (props: any) => renderLabel({ ...props, label })
 
-const MainNavigator = () => {
+const MainNavigator: React.FC<MainNavigatorProps> = ({ route }) => {
   return (
     <>
       <StatusBar barStyle="light-content" />
