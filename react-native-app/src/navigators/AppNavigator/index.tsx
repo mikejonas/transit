@@ -18,31 +18,31 @@ export type StackNavigatorParams = {
   UserDetails: { userId?: string }
 }
 
-const Stack = createStackNavigator<StackNavigatorParams>() // provide the type to your createStackNavigator
+const Stack = createStackNavigator<StackNavigatorParams>()
 
 type AppNavigationProp = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
 const AppNavigator = () => {
   const navigation = useNavigation<AppNavigationProp>()
   const theme = useTheme<Theme>()
   const [userSession, setUserSession] = useState<Session | null>(null)
-  const [isDataInitialized, setIsDataInitialized] = useState(false)
+  const [isLoadingUserData, setIsLoadingUserData] = useState(true)
   const [hasUserDetails, setHasUserDetails] = useState(false)
 
   const getUserDetails = async () => {
     const { data } = await requests.generated.getUserDetails()
     setHasUserDetails(!!data)
-    setIsDataInitialized(true) // todo rename
+    setIsLoadingUserData(false)
   }
 
   useEffect(() => {
     const { data: subscription } = requests.auth.onAuthStateChange(async (_event, session) => {
-      setIsDataInitialized(false) // todo rename
+      setIsLoadingUserData(false)
 
       setUserSession(session)
       if (session) {
         getUserDetails()
       } else {
-        setIsDataInitialized(true) // todo rename
+        setIsLoadingUserData(false)
       }
     })
 
@@ -55,26 +55,26 @@ const AppNavigator = () => {
     if (!userSession) {
       return 'Auth'
     } else {
-      return hasUserDetails ? 'MainNavigator' : 'UserDetails' //todo change to user details
+      return hasUserDetails ? 'MainNavigator' : 'UserDetails'
     }
   }
 
   useEffect(() => {
-    if (isDataInitialized) {
+    if (!isLoadingUserData) {
       navigation.reset({
         index: 0,
         routes: [{ name: getRouteName() }],
       })
     }
-  }, [userSession, isDataInitialized, hasUserDetails, navigation])
+  }, [userSession, isLoadingUserData, hasUserDetails, navigation])
 
-  const initialRouteName = 'Loading'
+  const INITIAL_ROUTE_NAME = 'Loading'
 
   return (
     <>
       <StatusBar barStyle="light-content" />
       <Stack.Navigator
-        initialRouteName={initialRouteName}
+        initialRouteName={INITIAL_ROUTE_NAME}
         screenOptions={{
           animationEnabled: false,
           cardStyle: { backgroundColor: theme.colors.background },

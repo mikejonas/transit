@@ -16,7 +16,6 @@ export type DrawerNavigatorParams = {
   DailyHoroscope: undefined
   WeeklyHoroscope: undefined
   MonthlyHoroscope: undefined
-  Logout: undefined
 }
 
 const Drawer = createDrawerNavigator<DrawerNavigatorParams>()
