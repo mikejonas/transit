@@ -17,10 +17,10 @@ export type StackNavigatorParams = {
   MainNavigator: undefined
   UserDetails: { userId?: string }
 }
+export type AppNavigationProp = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
 
 const Stack = createStackNavigator<StackNavigatorParams>()
 
-type AppNavigationProp = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
 const AppNavigator = () => {
   const navigation = useNavigation<AppNavigationProp>()
   const theme = useTheme<Theme>()
@@ -36,9 +36,9 @@ const AppNavigator = () => {
 
   useEffect(() => {
     const { data: subscription } = requests.auth.onAuthStateChange(async (_event, session) => {
-      setIsLoadingUserData(false)
-
+      setIsLoadingUserData(true)
       setUserSession(session)
+
       if (session) {
         getUserDetails()
       } else {

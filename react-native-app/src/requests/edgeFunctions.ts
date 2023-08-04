@@ -23,9 +23,22 @@ export const edgeFunctionRequests = {
 
     return response
   },
+  addUserDetails: async ({ name, birthDate }: { name: string; birthDate: Date }) => {
+    const response = await supabaseClient.functions.invoke('add-user-details', {
+      body: JSON.stringify({
+        name,
+        birth_date: birthDate,
+      }),
+    })
+
+    if (response.error) {
+      console.error('Error adding user details:', response.error)
+    }
+    return response
+  },
   newConversation: async () => {
     const response = await supabaseClient.functions.invoke('new-conversation')
-    console.log({ response })
+
     if (response.error) {
       console.error('Error starting new conversation:', response.error)
     }

@@ -19,21 +19,27 @@ serve(async (req) => {
     if(!user) throw new Error("User not found");
 
     const body = await req.json();
+    const date = new Date(body.birth_date)
+    
+    const birthDate = date.toISOString().slice(0,10);
+    const birthTime = date.toISOString().slice(11,19);
+
+
     // TODO: Support more columns
-    const user_details: UserDetails = {
+    const userDatails: UserDetails = {
       user_id: user.id,
       name: body.name,
-      birth_date: body.birth_date,
-      birth_time: "",
+      birth_date: birthDate,
+      birth_time: birthTime,
       birth_location: {
         latitude: 0,
         longitude: 0,
       },
     };
 
-    const added = await user_details_db.AddUserDetails(user_details);
+    const added = await user_details_db.AddUserDetails(userDatails);
     if (added) {
-      return SuccessfulResponse("Succesfully added user details.");
+      return SuccessfulResponse(JSON.stringify(userDatails));
     } else {
       return ErrorResponse("Failure to add user details for unknown reason.");
     }
