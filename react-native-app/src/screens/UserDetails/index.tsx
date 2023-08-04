@@ -17,14 +17,14 @@ const UserDetails: React.FC = () => {
   const navigation = useNavigation<AppNavigationProp>() //todo fix any
 
   const [name, setName] = useState<string>('')
-  const [selectedDate, handleDateChange] = useState<Date>(new Date())
-  const handleYearChange = (event: DateTimePickerEvent, date?: Date | undefined) => {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const handleDateChange = (event: DateTimePickerEvent, date?: Date | undefined) => {
     if (date) {
-      const year = date.getFullYear()
-      const month = date.getMonth()
-      const day = date.getDate()
-      const newDate = new Date(year, month, day)
-      handleDateChange(newDate)
+      const newDate = new Date(selectedDate)
+      newDate.setFullYear(date.getFullYear())
+      newDate.setMonth(date.getMonth())
+      newDate.setDate(date.getDate())
+      setSelectedDate(newDate)
     }
   }
 
@@ -38,7 +38,7 @@ const UserDetails: React.FC = () => {
         date.getHours(),
         minutes,
       )
-      handleDateChange(newDate)
+      setSelectedDate(newDate)
     }
   }
 
@@ -79,7 +79,7 @@ const UserDetails: React.FC = () => {
           {renderSectionHeader('Birth date', formattedDate)}
           <DateTimePicker
             value={selectedDate}
-            onChange={handleYearChange}
+            onChange={handleDateChange}
             mode="date"
             display="spinner"
             style={styles.picker}

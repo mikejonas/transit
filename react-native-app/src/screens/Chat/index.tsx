@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { FlatList, SafeAreaView } from 'react-native'
 import { InteractionManager } from 'react-native'
+import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from '@shopify/restyle'
 import Box from 'components/Box'
 import Button from 'components/Button'
 import Input from 'components/Input'
+import { DrawerNavigatorParams } from 'navigators/MainNavigator'
 import { requests } from 'requests'
 import { Theme } from 'theme/restyle'
 import ChatMessage from './components/ChatMessage'
@@ -27,28 +29,31 @@ const ChatScreen: React.FC = () => {
   const [hasDataInitialized, setHasDataInitialized] = useState(false)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const flatListRef = useRef<FlatList>(null)
+  const route = useRoute<RouteProp<DrawerNavigatorParams, 'DailyHoroscope'>>()
 
-  const newConversation = async () => {
-    const { data } = await requests.edgeFunctions.newConversation()
-    return data.conversation_id
-  }
-
-  const startConversation = async (conversationId: number) => {
-    const { data } = await requests.edgeFunctions.startConversation({ conversationId })
-    setMessages([data] as Message[])
+  const { conversationId } = route.params
+  const startConversation = async () => {
+    if (conversationId) {
+      const { data } = await requests.edgeFunctions.startConversation({ conversationId })
+      setMessages([data] as Message[])
+    } else {
+      console.error('conversationId is undefined')
+    }
   }
 
   const getMessages = async () => {
-    const { data } = await requests.generated.getMessages()
-    setMessages(data?.reverse() as Message[])
+    const { data } = await requests.generated.getMessages({ conversationId })
+    if (!data || data.length === 0) {
+      await startConversation()
+    } else {
+      setMessages(data.reverse() as Message[])
+    }
     setHasDataInitialized(true)
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      const conversationId = await newConversation()
-      await startConversation(conversationId)
-      // await getMessages()
+      await getMessages()
       setIsInitialLoading(false)
     }
 
