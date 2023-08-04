@@ -13,6 +13,7 @@ import {
   Message,
   makeTemporaryBotResponse,
   makeUserSubmittedMessage,
+  ASSISTANT_ROLE,
 } from './utils'
 
 /**
@@ -24,17 +25,34 @@ const ChatScreen: React.FC = () => {
   const [inputText, setInputText] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [hasDataInitialized, setHasDataInitialized] = useState(false)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
   const flatListRef = useRef<FlatList>(null)
+
+  const newConversation = async () => {
+    const { data } = await requests.edgeFunctions.newConversation()
+    return data.conversation_id
+  }
+
+  const startConversation = async (conversationId: number) => {
+    const { data } = await requests.edgeFunctions.startConversation({ conversationId })
+    setMessages([data] as Message[])
+  }
 
   const getMessages = async () => {
     const { data } = await requests.generated.getMessages()
-
     setMessages(data?.reverse() as Message[])
     setHasDataInitialized(true)
   }
 
   useEffect(() => {
-    getMessages()
+    const fetchData = async () => {
+      const conversationId = await newConversation()
+      await startConversation(conversationId)
+      // await getMessages()
+      setIsInitialLoading(false)
+    }
+
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -110,6 +128,11 @@ const ChatScreen: React.FC = () => {
 
   return (
     <Box flex={1} backgroundColor="background">
+      {isInitialLoading && (
+        <Box marginBottom="m" padding="m">
+          <ChatMessage messageRole={ASSISTANT_ROLE} />
+        </Box>
+      )}
       <FlatList
         ref={flatListRef}
         data={messages}

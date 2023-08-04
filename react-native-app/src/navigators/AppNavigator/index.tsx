@@ -8,12 +8,14 @@ import MainNavigator from 'navigators/MainNavigator'
 import { requests } from 'requests'
 import Auth from 'screens/Auth'
 import InitialLoadingScreen from 'screens/InitialLoading'
+import UserDetails from 'screens/UserDetails'
 import { Theme } from 'theme/restyle'
 
 export type StackNavigatorParams = {
   Auth: undefined
   Loading: undefined
   MainNavigator: undefined
+  UserDetails: { userId?: string }
 }
 
 const Stack = createStackNavigator<StackNavigatorParams>() // provide the type to your createStackNavigator
@@ -22,34 +24,49 @@ type AppNavigationProp = StackNavigationProp<StackNavigatorParams, 'MainNavigato
 const AppNavigator = () => {
   const navigation = useNavigation<AppNavigationProp>()
   const theme = useTheme<Theme>()
-  const [sessionObject, setSessionObject] = useState<Session | null>(null)
-  const [isSessionInitialized, setIsSessionInitialized] = useState(true)
+  const [userSession, setUserSession] = useState<Session | null>(null)
+  const [isDataInitialized, setIsDataInitialized] = useState(false)
+  const [hasUserDetails, setHasUserDetails] = useState(false)
+
+  const getUserDetails = async () => {
+    const { data } = await requests.generated.getUserDetails()
+    setHasUserDetails(!!data)
+    setIsDataInitialized(true) // todo rename
+  }
 
   useEffect(() => {
-    const fetchSession = async () => {
-      const session = await requests.auth.getSession()
-      setSessionObject(session.data.session)
-      setIsSessionInitialized(false)
-    }
     const { data: subscription } = requests.auth.onAuthStateChange(async (_event, session) => {
-      setSessionObject(session)
-    })
+      setIsDataInitialized(false) // todo rename
 
-    fetchSession()
+      setUserSession(session)
+      if (session) {
+        getUserDetails()
+      } else {
+        setIsDataInitialized(true) // todo rename
+      }
+    })
 
     return () => {
       subscription.subscription.unsubscribe()
     }
   }, [])
 
+  const getRouteName = () => {
+    if (!userSession) {
+      return 'Auth'
+    } else {
+      return hasUserDetails ? 'MainNavigator' : 'UserDetails' //todo change to user details
+    }
+  }
+
   useEffect(() => {
-    if (!isSessionInitialized) {
+    if (isDataInitialized) {
       navigation.reset({
         index: 0,
-        routes: [{ name: sessionObject ? 'MainNavigator' : 'Auth' }],
+        routes: [{ name: getRouteName() }],
       })
     }
-  }, [sessionObject, isSessionInitialized, navigation])
+  }, [userSession, isDataInitialized, hasUserDetails, navigation])
 
   const initialRouteName = 'Loading'
 
@@ -58,7 +75,10 @@ const AppNavigator = () => {
       <StatusBar barStyle="light-content" />
       <Stack.Navigator
         initialRouteName={initialRouteName}
-        screenOptions={{ animationEnabled: false }}>
+        screenOptions={{
+          animationEnabled: false,
+          cardStyle: { backgroundColor: theme.colors.background },
+        }}>
         <Stack.Screen
           name="Loading"
           component={InitialLoadingScreen}
@@ -68,15 +88,21 @@ const AppNavigator = () => {
           name="Auth"
           component={Auth}
           options={{
-            headerShown: false, // This will hide the header
-            cardStyle: { backgroundColor: theme.colors.background },
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="MainNavigator"
           component={MainNavigator}
           options={{
-            headerShown: false, // This will hide the header
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="UserDetails"
+          component={UserDetails}
+          options={{
+            headerShown: false,
           }}
         />
       </Stack.Navigator>

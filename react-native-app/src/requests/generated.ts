@@ -1,5 +1,11 @@
 import supabaseClient from 'utils/supabaseClient'
 
+const TABLES = {
+  messages: 'Messages',
+  userDetails: 'User Details',
+  conversation: 'Conversation',
+}
+
 /**
  * requests from the supabases auto generated api
  * implementation - https://github.com/supabase/postgrest-js/blob/master/src/PostgrestClient.ts
@@ -7,7 +13,7 @@ import supabaseClient from 'utils/supabaseClient'
 export const generatedRequests = {
   getMessages: async () => {
     const response = await supabaseClient
-      .from('Messages')
+      .from(TABLES.messages)
       .select(
         `
           conversation_id,
@@ -23,5 +29,18 @@ export const generatedRequests = {
     if (response.error) console.error('Error getting session:', response.error)
 
     return response // newest messages are at the bottom
+  },
+  getUserDetails: async () => {
+    const response = await supabaseClient
+      .from(TABLES.userDetails)
+      .select(
+        `
+        user_id
+      `,
+      )
+      .maybeSingle()
+    if (response.error) console.error('Error getting session:', response.error)
+
+    return response
   },
 }
