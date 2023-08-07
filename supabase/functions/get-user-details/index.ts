@@ -1,7 +1,7 @@
 import { serve } from "Serve";
 import { createClient } from "SupabaseClient";
 import { ErrorResponse, SuccessfulResponse } from "../helpers/response.ts";
-import { UserDetailsDatabase } from "../helpers/user_details.ts";
+import { UserDetailsDatabase } from "../helpers/database_helpers/user_details_database.ts";
 
 serve(async (req) => {
   try {
@@ -11,9 +11,9 @@ serve(async (req) => {
       global: { headers: { Authorization: req.headers.get("Authorization")! } },
     });
     const user_details_db = new UserDetailsDatabase(supabase);
-    const { data: { user } } = await supabase.auth.getUser()
-    if(!user) throw new Error("User not found");
-    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("User not found");
+
     const user_details = await user_details_db.GetUserDetails(user.id);
     return SuccessfulResponse(JSON.stringify(user_details));
   } catch (error) {

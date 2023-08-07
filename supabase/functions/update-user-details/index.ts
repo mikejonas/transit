@@ -4,7 +4,7 @@ import { ErrorResponse, SuccessfulResponse } from "../helpers/response.ts";
 import {
   UserDetails,
   UserDetailsDatabase,
-} from "../helpers/user_details.ts";
+} from "../helpers/database_helpers/user_details_database.ts";
 
 serve(async (req) => {
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -15,8 +15,8 @@ serve(async (req) => {
   });
   const user_details_db = new UserDetailsDatabase(supabase);
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if(!user) throw new Error("User not found");
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("User not found");
 
   try {
     const body = await req.json();

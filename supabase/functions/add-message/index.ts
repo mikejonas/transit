@@ -1,7 +1,7 @@
 import { serve } from "Serve";
 import { createClient } from "SupabaseClient";
 import { ErrorResponse, SuccessfulResponse } from "../helpers/response.ts";
-import { Conversations } from "../helpers/conversations.ts";
+import { ConversationFacilitator } from "../helpers/conversation_facilitator.ts";
 
 serve(async (req) => {
   try {
@@ -10,14 +10,14 @@ serve(async (req) => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
       global: { headers: { Authorization: req.headers.get("Authorization")! } },
     });
-    const { data: { user } } = await supabase.auth.getUser()
-    if(!user) throw new Error("User not found");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("User not found");
 
     const body = await req.json();
     const conversation_id = body.conversation_id;
     const new_message = body.new_message;
-    const conversation = new Conversations(supabase);
-    const message = await conversation.AddMessageToConversation(
+    const conversation_facilitator = new ConversationFacilitator(supabase);
+    const message = await conversation_facilitator.AddMessageToConversation(
       user.id,
       conversation_id,
       new_message,

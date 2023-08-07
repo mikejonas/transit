@@ -1,21 +1,20 @@
 import { SupabaseClient } from "SupabaseClient";
-import { UserDetailsDatabase } from "./user_details.ts";
+
+type RoleType = "user" | "system" | "assistant";
 
 interface Message {
   conversation_id: number;
   user_id: string;
   message_id: number;
-  role: string;
+  role: RoleType;
   content: string;
 }
 
-class Messages {
+class MessagesDatabase {
   supabase: SupabaseClient;
-  user_details_db: UserDetailsDatabase;
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
-    this.user_details_db = new UserDetailsDatabase(supabase);
   }
 
   // Returns a list of messages in the order from oldest to newest.
@@ -32,11 +31,11 @@ class Messages {
     const messages: Message[] = [];
     for (let i = 0; i < data.length; i++) {
       const message: Message = {
-        conversation_id: data[0].conversation_id,
-        user_id: data[0].user_id,
-        message_id: data[0].message_id,
-        role: data[0].role,
-        content: data[0].content,
+        conversation_id: data[i].conversation_id,
+        user_id: data[i].user_id,
+        message_id: data[i].message_id,
+        role: data[i].role,
+        content: data[i].content,
       };
       messages.push(message);
     }
@@ -59,7 +58,7 @@ class Messages {
   public async AddMessage(
     user_id: string,
     conversation_id: number,
-    role: string,
+    role: RoleType,
     content: string,
   ): Promise<Message> {
     const { data, error } = await this.supabase
@@ -87,5 +86,5 @@ class Messages {
   }
 }
 
-export { Messages };
+export { MessagesDatabase };
 export type { Message };

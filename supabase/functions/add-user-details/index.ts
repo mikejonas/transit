@@ -4,7 +4,7 @@ import { ErrorResponse, SuccessfulResponse } from "../helpers/response.ts";
 import {
   UserDetails,
   UserDetailsDatabase,
-} from "../helpers/user_details.ts";
+} from "../helpers/database_helpers/user_details_database.ts";
 
 serve(async (req) => {
   try {

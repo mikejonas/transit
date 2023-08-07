@@ -1,7 +1,7 @@
 import { serve } from "Serve";
 import { createClient } from "SupabaseClient";
 import { ErrorResponse, SuccessfulResponse } from "../helpers/response.ts";
-import { Conversations } from "../helpers/conversations.ts";
+import { ConversationFacilitator } from "../helpers/conversation_facilitator.ts";
 
 serve(async (req) => {
   try {
@@ -11,11 +11,13 @@ serve(async (req) => {
       global: { headers: { Authorization: req.headers.get("Authorization")! } },
     });
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if(!user) throw new Error("User not found");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("User not found");
 
-    const conversations = new Conversations(supabase);
-    const conversation = await conversations.NewConversation(user.id);
+    const conversation_facilitator = new ConversationFacilitator(supabase);
+    const conversation = await conversation_facilitator.NewConversation(
+      user.id,
+    );
 
     return SuccessfulResponse(JSON.stringify(conversation));
   } catch (error) {
