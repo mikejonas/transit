@@ -1,4 +1,4 @@
-import { UserDetails } from "./user_details.ts";
+import { UserDetails } from "./database_helpers/user_details_database.ts";
 
 function GetSunSign(user_details: UserDetails): string {
   const birth_date = new Date(user_details.birth_date);
