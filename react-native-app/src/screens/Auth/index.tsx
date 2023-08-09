@@ -5,6 +5,7 @@ import Input from 'components/Input'
 import Text from 'components/Text'
 import Textbutton from 'components/TextButton'
 import { requests } from 'requests'
+import Environment from './components/Environment'
 
 const Auth = () => {
   const [email, setEmail] = useState('')
@@ -46,8 +47,9 @@ const Auth = () => {
   }
 
   return (
-    <Box flex={1} justifyContent="center" alignItems="center" padding="m">
-      <Box width={300} alignItems="stretch">
+    <Box flex={1} justifyContent="space-between" alignItems="center" padding="xl">
+      <Box flex={1} />
+      <Box width="100%" alignItems="stretch">
         <Box mb="s">
           <Input placeholder="Email" value={email} onChangeText={handleChangeEmail} />
         </Box>
@@ -79,6 +81,9 @@ const Auth = () => {
             {isSignUp ? 'Switch to sign in' : 'Switch to sign up'}
           </Textbutton>
         </Box>
+      </Box>
+      <Box width="100%" flex={1} justifyContent="flex-end" alignItems="center" mb="m">
+        <Environment />
       </Box>
     </Box>
   )
