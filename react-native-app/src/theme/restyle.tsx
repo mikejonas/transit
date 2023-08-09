@@ -1,15 +1,18 @@
 import { createTheme } from '@shopify/restyle'
 
 const palette = {
-  darkGrey: '#1c1c22',
-  charcoal: '#23272A',
   softBlue: '#444b50',
   softBlueLight: '#bdc8d0',
-  white: '#FFFFFF',
   vibrantBlue: '#7289DA',
   vibrantPurple: '#8530C8',
-  black: '#000000',
-  lightGrey: '#d7dadf',
+  black: '#000',
+  charcoal: '#1c1c22',
+  darkGrey: '#333333',
+  mediumGrey: '#666',
+  lightGrey: '#999',
+  offWhite: '#ccc',
+  whiteSmoke: '#f5f5f5',
+  white: '#FFFFFF',
   red: '#ff5353',
 }
 
@@ -21,6 +24,7 @@ const baseTheme = createTheme({
     cardSecondaryBackground: '',
     title: '',
     text: '',
+    textSecondary: '', // light graey
     error: '',
     buttonPurple: '',
   },
@@ -72,11 +76,12 @@ const baseTheme = createTheme({
 export const darkTheme = createTheme({
   ...baseTheme,
   colors: {
-    background: palette.darkGrey,
+    background: palette.charcoal,
     cardPrimaryBackground: palette.charcoal,
     cardSecondaryBackground: palette.softBlue,
     title: palette.white,
     text: palette.white,
+    textSecondary: palette.lightGrey,
     error: palette.red,
     buttonPurple: palette.vibrantPurple,
   },
@@ -90,6 +95,7 @@ export const lightTheme = createTheme({
     cardSecondaryBackground: palette.softBlueLight,
     title: palette.black,
     text: palette.black,
+    textSecondary: palette.black,
     error: palette.red,
     buttonPurple: palette.vibrantPurple,
   },
