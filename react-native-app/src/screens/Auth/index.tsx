@@ -13,6 +13,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [authError, setAuthError] = useState<string>()
+
   const handleSubmit = async () => {
     setLoading(true)
     if (isSignUp) {
