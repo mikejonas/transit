@@ -83,14 +83,15 @@ const ChatScreen: React.FC = () => {
     setInputText('')
     addUserMessage(makeUserSubmittedMessage(newMessage, lastMessageId + 1))
     addTemporaryResponse()
-
-    const { data, error } = await requests.edgeFunctions.addMessage({
-      newMessage: newMessage,
-      conversationId,
-    })
-
-    if (error) throw error
-    replaceTemporaryResponseWithBotResponse(data)
+    try {
+      const { data } = await requests.edgeFunctions.addMessage({
+        newMessage: newMessage,
+        conversationId,
+      })
+      replaceTemporaryResponseWithBotResponse(data)
+    } catch (error: any) {
+      // do something with error (error.message)
+    }
   }
 
   const TEMP_MESSAGE_ID = 999999999
