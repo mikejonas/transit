@@ -24,8 +24,9 @@ export const generatedRequests = {
           user_id
         `,
       )
-      .limit(10)
+      .neq('role', 'system')
       .eq('conversation_id', conversationId)
+      .limit(10)
       .order('created_at', { ascending: false })
     if (response.error) console.error('Error getting session:', response.error)
 
