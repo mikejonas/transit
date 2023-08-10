@@ -6,6 +6,8 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config')
  *
  * @type {import('metro-config').MetroConfig}
  */
-const config = {}
+const config = {
+  cacheVersion: process.env.APP_ENV, // This prevents APP_ENV from being cached to an old value
+}
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config)

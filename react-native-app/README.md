@@ -23,10 +23,11 @@ npx pod-install ios # ios dependencies
 
 **Metro** is a JavaScript bundler that ships with React Native.
 
-To start Metro, run the following command from the _root_ of the React Native app:
+To start Metro, run one of the following commands from the _root_ of the React Native app:
 
 ```bash
-npm start
+`npm run start:local` # uses localhost urls and config
+`npm run start:prod` # uses production urls and config
 ```
 
 ## Step 4: Start the App
