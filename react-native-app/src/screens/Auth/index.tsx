@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import Analytics from 'appcenter-analytics'
+import React, { useState } from 'react'
 import Box from 'components/Box'
 import Button from 'components/Button'
 import Input from 'components/Input'
@@ -14,9 +13,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [authError, setAuthError] = useState<string>()
-  useEffect(() => {
-    Analytics.trackEvent('Login screen landed')
-  }, [])
+
   const handleSubmit = async () => {
     setLoading(true)
     if (isSignUp) {
