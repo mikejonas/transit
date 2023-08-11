@@ -1,8 +1,15 @@
+import { AuthError } from '@supabase/supabase-js'
 import supabaseClient from 'utils/supabaseClient'
 
 interface EmailParams {
   email: string
   password: string
+}
+
+const handleSupabaseAuthError = async (message: string, error: AuthError) => {
+  const constructedError = new Error(`${message}: ${error.message}`)
+  console.error(constructedError)
+  throw constructedError
 }
 
 /**
@@ -11,13 +18,13 @@ interface EmailParams {
 export const authRequests = {
   signOut: async () => {
     const response = await supabaseClient.auth.signOut()
-    if (response.error) console.error('Error signing out:', response.error.message)
+    if (response.error) handleSupabaseAuthError('Error signing out:', response.error)
 
     return response
   },
   signUp: async ({ email, password }: EmailParams) => {
     const response = await supabaseClient.auth.signUp({ email, password })
-    if (response.error) console.error('Error signing up:', response.error.message)
+    if (response.error) handleSupabaseAuthError('Error signing up:', response.error)
 
     return response
   },
@@ -26,7 +33,7 @@ export const authRequests = {
       email,
       password,
     })
-    if (response.error) console.error('Error signing in:', response.error.message)
+    if (response.error) handleSupabaseAuthError('Error signing in:', response.error)
 
     return response
   },

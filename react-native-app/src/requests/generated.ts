@@ -1,9 +1,16 @@
+import { PostgrestError } from '@supabase/supabase-js'
 import supabaseClient from 'utils/supabaseClient'
 
 const TABLES = {
   messages: 'Messages',
   userDetails: 'User Details',
   conversation: 'Conversations',
+}
+
+const handleSupabaseRequestError = async (message: string, error: PostgrestError) => {
+  const constructedError = new Error(`${message}: ${error.message}`)
+  console.error(constructedError)
+  throw constructedError
 }
 
 /**
@@ -28,7 +35,7 @@ export const generatedRequests = {
       .eq('conversation_id', conversationId)
       .limit(10)
       .order('created_at', { ascending: false })
-    if (response.error) console.error('Error getting session:', response.error)
+    if (response.error) handleSupabaseRequestError('Error getting messages:', response.error)
 
     return response // newest messages are at the bottom
   },
@@ -41,7 +48,7 @@ export const generatedRequests = {
       `,
       )
       .maybeSingle()
-    if (response.error) console.error('Error getting session:', response.error)
+    if (response.error) handleSupabaseRequestError('Error getting user details:', response.error)
 
     return response
   },
@@ -56,7 +63,7 @@ export const generatedRequests = {
       )
       .maybeSingle()
     console.log(response)
-    if (response.error) console.error('Error getting session:', response.error)
+    if (response.error) handleSupabaseRequestError('Error getting conversation:', response.error)
 
     return response
   },
