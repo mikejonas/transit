@@ -1,35 +1,161 @@
-import { UserDetails } from "./database_helpers/user_details_database.ts";
-
-function GetSunSign(user_details: UserDetails): string {
-  const birth_date = new Date(user_details.birth_date);
-  const month = birth_date.getMonth() + 1; // months from 1-12
-  const day = birth_date.getDate();
-
-  if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) {
-    return "Aquarius";
-  } else if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) {
-    return "Pisces";
-  } else if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) {
-    return "Aries";
-  } else if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) {
-    return "Taurus";
-  } else if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) {
-    return "Gemini";
-  } else if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) {
-    return "Cancer";
-  } else if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) {
-    return "Leo";
-  } else if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) {
-    return "Virgo";
-  } else if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) {
-    return "Libra";
-  } else if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) {
-    return "Scorpio";
-  } else if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) {
-    return "Sagittarius";
-  } else {
-    return "Capricorn";
-  }
+enum ObjectType {
+  MOON,
+  SUN,
 }
 
-export { GetSunSign };
+type ZodiacSign =
+  | "Aquarius"
+  | "Pisces"
+  | "Aries"
+  | "Taurus"
+  | "Gemini"
+  | "Cancer"
+  | "Leo"
+  | "Virgo"
+  | "Libra"
+  | "Scorpio"
+  | "Sagittarius"
+  | "Capricorn";
+
+interface Location {
+  latitude: number;
+  longitude: number;
+}
+
+function GetHorizonsUrl(
+  location: Location,
+  date: string, // Format: YYYY-MM-DD
+  time: string, // Format: HH:MM:SS
+  object_type: ObjectType,
+): string {
+  type QueryParams = {
+    [key: string]: string | number | boolean;
+  };
+
+  const object_id_map: { [key in ObjectType]: number } = {
+    [ObjectType.MOON]: 310,
+    [ObjectType.SUN]: 10,
+  };
+
+  const object_id = object_id_map[object_type];
+
+  const params: QueryParams = {
+    format: "json",
+    CSV_FORMAT: "'YES'",
+    // 1 gets us the R.A.
+    quantities: "'1'",
+    // This is the birth location. Example: -114.00800,+46.86170,0
+    SITE_COORD: `'${location.latitude},${location.longitude},0'`,
+    // This is the birth time. Example: 1994-12-09 06:58
+    TLIST: `'${date} ${time}'`,
+    // This ths the object type. Example: 301 for the moon.
+    COMMAND: `'${object_id}'`,
+  };
+
+  const base_url = "https://ssd.jpl.nasa.gov";
+  const url_path = "/api/horizons.api";
+  const url = new URL(url_path, base_url);
+
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.append(key, value.toString());
+  }
+  return url.toString();
+}
+
+type HorizonData = {
+  result: string;
+  signature: {
+    version: string;
+    source: string;
+  };
+};
+
+function ExtractRA(data: HorizonData): string {
+  const lines = data.result.split("\n");
+  const startMarker = "$$SOE";
+  const endMarker = "$$EOE";
+
+  let isDataSection = false;
+
+  for (let line of lines) {
+    line = line.trim();
+    if (line === endMarker) {
+      isDataSection = false;
+    }
+
+    if (isDataSection) {
+      // Assuming the format is always "Date , , , RA , DEC ," we split by "," and get the RA value.
+      const parts = line.split(",");
+      if (parts.length >= 4) {
+        return parts[3].trim(); // Returns the R.A._(ICRF)
+      }
+    }
+
+    if (line === startMarker) {
+      isDataSection = true;
+    }
+  }
+
+  throw new Error("Could not extract the R.A.");
+}
+
+async function FetchObjectRa(
+  location: Location,
+  date: string, // Format: YYYY-MM-DD
+  time: string, // Format: HH:MM:SS
+  object_type: ObjectType,
+): Promise<string> {
+  const url = GetHorizonsUrl(location, date, time, object_type);
+  console.log(url);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("Failed to reach URL: " + url);
+  }
+  const horizon_data: HorizonData = await response.json();
+  const object_ra = ExtractRA(horizon_data);
+  return object_ra;
+}
+
+async function GetObjectZodiacSign(
+  location: Location,
+  date: string, // Format: YYYY-MM-DD
+  time: string, // Format: HH:MM:SS
+  object_type: ObjectType,
+): Promise<ZodiacSign> {
+  const ra = await FetchObjectRa(location, date, time, object_type);
+
+  const [hours, minutes, seconds] = ra.split(" ").map((value) =>
+    parseFloat(value)
+  );
+
+  if (
+    hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60 || seconds < 0 ||
+    seconds >= 60
+  ) {
+    throw new Error("Invalid RA format");
+  }
+
+  const totalHours = hours + minutes / 60 + seconds / 3600;
+
+  if (totalHours < 2) return "Aries";
+  if (totalHours < 4) return "Taurus";
+  if (totalHours < 6) return "Gemini";
+  if (totalHours < 8) return "Cancer";
+  if (totalHours < 10) return "Leo";
+  if (totalHours < 12) return "Virgo";
+  if (totalHours < 14) return "Libra";
+  if (totalHours < 16) return "Scorpio";
+  if (totalHours < 18) return "Sagittarius";
+  if (totalHours < 20) return "Capricorn";
+  if (totalHours < 22) return "Aquarius";
+  return "Pisces";
+}
+
+// Birthday in GMT.
+// const date = new Date("Thursday, December 8, 1994 6:57:00 PM");
+// const location: Location = { latitude: -114.00800, longitude: 46.86170 };
+// const object_type = ObjectType.SUN;
+// console.log(await GetObjectZodiacSign(location, date, object_type));
+
+export { GetObjectZodiacSign, ObjectType };
+export type { ZodiacSign };

@@ -5,7 +5,7 @@ import {
   MessagesDatabase,
 } from "./database_helpers/messages_database.ts";
 import { OpenAI } from "OpenAi";
-import { GetSunSign } from "./astrology.ts";
+import { ObjectType, GetObjectZodiacSign, ZodiacSign } from "./astrology.ts";
 import {
   Conversation,
   ConversationsDatabase,
@@ -108,9 +108,8 @@ class ConversationFacilitator {
       );
     }
     const user_details = await this.user_details_db.GetUserDetails(user_id);
-    const user_prompt = "In one paragraph, tell me what my horoscope is on " +
-      new Date().toDateString() + " given that my sign is " +
-      GetSunSign(user_details) + ".";
+    const sun_sign: ZodiacSign = await GetObjectZodiacSign(user_details.birth_location, user_details.birth_date, user_details.birth_time, ObjectType.SUN);
+    const user_prompt = "In one paragraph, tell me what my horoscope is on " + new Date().toDateString() + " given that my sign is " + sun_sign + ".";
     const system_message = await this.messages_database.AddMessage(
       user_id,
       conversation_id,
