@@ -1,0 +1,57 @@
+name: CI
+
+# Use azure pipelines to build and deploy to TestFlight for now
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Load ruby cache
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: "3.2"
+          working-directory: react-native-app/
+
+      - name: Load npm cache
+        uses: actions/setup-node@v3
+        with:
+          cache: "npm"
+          cache-dependency-path: react-native-app/package-lock.json
+
+      - name: Load pods cache
+        uses: actions/cache@v3
+        with:
+          path: react-native-app/ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('react-native-app/ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Install dependencies
+        run: |
+          cd react-native-app
+          npm ci
+          cd ios
+          bundle install
+          pod install
+
+      - name: Build and Deploy to TestFlight
+        run: cd react-native-app && bundle exec fastlane ios beta
+        env:
+          # required for fastlane match in the Fastfile
+          APP_STORE_CONNECT_ISSUER_ID: "69a6de84-80a4-47e3-e053-5b8c7c11a4d1"
+          APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
+          APP_STORE_CONNECT_KEY_ID: "TB5LMSYCHW"
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_CERTIFICATES_REPO_URL: https://${{ secrets.CERTIFICATES_REPO_READ_ACCESS_TOKEN }}@github.com/transit-astrology/transit-certificates.git
+          #React native required .env keys
+          SB_ANON_KEY: ${{ secrets.SB_ANON_KEY }}
+          APP_ENV: prod
+          #Recommended for fastlane. Not sure if needed
+          LANG: en_US.UTF-8
+          LC_ALL: en_US.UTF-8
