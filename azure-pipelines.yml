@@ -23,10 +23,13 @@ jobs:
           key: 'gems | "$(Agent.OS)" | react-native-app/Gemfile.lock'
           path: $(System.DefaultWorkingDirectory)/react-native-app/vendor/bundle
           restoreKeys: gems | "$(Agent.OS)"
+        displayName: Ruby Gems Cache
+
       - task: UseRubyVersion@0
         inputs:
           versionSpec: $(rubyVersion)
           addToPath: true
+
       - script: |
           cd react-native-app
           gem install bundler cocoapods
@@ -38,6 +41,8 @@ jobs:
           key: 'npm | "$(Agent.OS)" | react-native-app/package-lock.json'
           path: $(System.DefaultWorkingDirectory)/react-native-app/node_modules
           restoreKeys: npm | "$(Agent.OS)"
+        displayName: NPM Cache
+
       - script: |
           cd react-native-app
           npm ci
@@ -48,6 +53,8 @@ jobs:
           key: 'pods | "$(Agent.OS)" | react-native-app/ios/Podfile.lock'
           path: $(System.DefaultWorkingDirectory)/react-native-app/ios/Pods
           restoreKeys: pods | "$(Agent.OS)"
+        displayName: CocoaPods Cache
+
       - script: |
           cd react-native-app/ios
           pod install
