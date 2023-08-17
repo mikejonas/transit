@@ -5,6 +5,9 @@ import {
   UserDetails,
   UserDetailsDatabase,
 } from "../helpers/database_helpers/user_details_database.ts";
+import {
+  AstrologicalDetailsDatabase,
+} from "../helpers/database_helpers/astrological_details_database.ts";
 
 serve(async (req) => {
   try {
@@ -15,35 +18,35 @@ serve(async (req) => {
     });
     const user_details_db = new UserDetailsDatabase(supabase);
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if(!user) throw new Error("User not found");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("User not found");
 
     const body = await req.json();
-    const date = new Date(body.birth_date)
-    
-    const birthDate = date.toISOString().slice(0,10);
-    const birthTime = date.toISOString().slice(11,19);
+    const date = new Date(body.birth_date);
 
+    const birth_date = date.toISOString().slice(0, 10);
+    const birth_time = date.toISOString().slice(11, 19);
 
     // TODO: Support more columns
-    const userDatails: UserDetails = {
+    const user_details: UserDetails = {
       user_id: user.id,
       name: body.name,
-      birth_date: birthDate,
-      birth_time: birthTime,
-      birth_location: {
-        latitude: 0,
-        longitude: 0,
-      },
+      birth_date: birth_date,
+      birth_time: birth_time,
+      birth_location: "",
+      birth_latitude: 0,
+      birth_longitude: 0,
     };
-
-    const added = await user_details_db.AddUserDetails(userDatails);
+    const added = await user_details_db.AddUserDetails(user_details);
     if (added) {
-      return SuccessfulResponse(JSON.stringify(userDatails));
+      const astrological_details_db = new AstrologicalDetailsDatabase(supabase);
+      await astrological_details_db.AddAstrologicalDetailsForUser(user_details);
+      return SuccessfulResponse(JSON.stringify(user_details));
     } else {
       return ErrorResponse("Failure to add user details for unknown reason.");
     }
   } catch (error) {
+    console.log("Error: ", error);
     return ErrorResponse(error.message);
   }
 });

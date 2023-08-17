@@ -5,11 +5,15 @@ import {
   MessagesDatabase,
 } from "./database_helpers/messages_database.ts";
 import { OpenAI } from "OpenAi";
-import { ObjectType, GetObjectZodiacSign, ZodiacSign } from "./astrology.ts";
+import { ZodiacSign } from "./astrology.ts";
 import {
   Conversation,
   ConversationsDatabase,
 } from "./database_helpers/conversations_database.ts";
+import {
+  AstrologicalDetail,
+  AstrologicalDetailsDatabase,
+} from "../helpers/database_helpers/astrological_details_database.ts";
 
 const SYSTEM_MESSAGE =
   "You are an astrologer who specializes in reading horoscopes. Every response must be less than two paragraphs. All messages must pertain to horoscopes.";
@@ -20,6 +24,7 @@ class ConversationFacilitator {
   messages_database: MessagesDatabase;
   conversation_database: ConversationsDatabase;
   open_ai: OpenAI;
+  astrological_details_db: AstrologicalDetailsDatabase;
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
@@ -27,6 +32,7 @@ class ConversationFacilitator {
     this.messages_database = new MessagesDatabase(supabase);
     this.conversation_database = new ConversationsDatabase(supabase);
     this.open_ai = new OpenAI(Deno.env.get("OPENAI_API_KEY")!);
+    this.astrological_details_db = new AstrologicalDetailsDatabase(supabase);
   }
 
   // Inserts a new conversation row into the conversation table. Does not change the messages table.
@@ -107,9 +113,10 @@ class ConversationFacilitator {
         "Messages already exist. You must start a new conversation before calling GetFirstMessage.",
       );
     }
-    const user_details = await this.user_details_db.GetUserDetails(user_id);
-    const sun_sign: ZodiacSign = await GetObjectZodiacSign(user_details.birth_location, user_details.birth_date, user_details.birth_time, ObjectType.SUN);
-    const user_prompt = "In one paragraph, tell me what my horoscope is on " + new Date().toDateString() + " given that my sign is " + sun_sign + ".";
+    const sun_sign: ZodiacSign = await this.astrological_details_db
+      .GetZodiacSign(user_id, "Sun");
+    const user_prompt = "In one paragraph, tell me what my horoscope is on " +
+      new Date().toDateString() + " given that my sign is " + sun_sign + ".";
     const system_message = await this.messages_database.AddMessage(
       user_id,
       conversation_id,

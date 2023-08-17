@@ -1,16 +1,13 @@
 import { SupabaseClient } from "SupabaseClient";
 
-interface LocationOfBirth {
-  latitude: number;
-  longitude: number;
-}
-
 interface UserDetails {
   user_id: string;
   name: string;
   birth_date: string; // Format: YYYY-MM-DD
   birth_time: string; // Format: HH:MM:SS
-  birth_location: LocationOfBirth;
+  birth_location: string;
+  birth_latitude: number;
+  birth_longitude: number;
 }
 
 // TODO: Support more columns
@@ -33,17 +30,17 @@ class UserDetailsDatabase {
   }
 
   public async AddUserDetails(user_details: UserDetails): Promise<boolean> {
-    if (await this.DoesUserExist(user_details.user_id)) {
-      throw new Error("User already exists. You must update the user instead.");
-    }
     const { error } = await this.supabase
       .from("User Details")
-      .insert([
+      .upsert([
         {
           user_id: user_details.user_id,
           name: user_details.name,
           birth_date: user_details.birth_date,
           birth_time: user_details.birth_time,
+          birth_location: user_details.birth_location,
+          birth_latitude: user_details.birth_latitude,
+          birth_longitude: user_details.birth_longitude,
         },
       ]);
     if (error) {
@@ -65,6 +62,10 @@ class UserDetailsDatabase {
           user_id: user_details.user_id,
           name: user_details.name,
           birth_date: user_details.birth_date,
+          birth_time: user_details.birth_time,
+          birth_location: user_details.birth_location,
+          birth_latitude: user_details.birth_latitude,
+          birth_longitude: user_details.birth_longitude,
         },
       )
       .eq("user_id", user_details.user_id);
@@ -93,10 +94,9 @@ class UserDetailsDatabase {
       name: data[0].name,
       birth_date: data[0].birth_date,
       birth_time: "",
-      birth_location: {
-        latitude: 0,
-        longitude: 0,
-      },
+      birth_location: "",
+      birth_latitude: 0,
+      birth_longitude: 0,
     };
     return user_details;
   }

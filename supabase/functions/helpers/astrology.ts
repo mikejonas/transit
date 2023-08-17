@@ -1,7 +1,11 @@
-enum ObjectType {
-  MOON,
-  SUN,
-}
+import { UserDetails } from "./database_helpers/user_details_database.ts";
+
+type ObjectType = "Moon" | "Sun";
+
+const ObjectTypeMap: Map<ObjectType, number> = new Map([
+  ["Moon", 310],
+  ["Sun", 10],
+]);
 
 type ZodiacSign =
   | "Aquarius"
@@ -17,27 +21,20 @@ type ZodiacSign =
   | "Sagittarius"
   | "Capricorn";
 
-interface Location {
-  latitude: number;
-  longitude: number;
+interface RA {
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
 function GetHorizonsUrl(
-  location: Location,
-  date: string, // Format: YYYY-MM-DD
-  time: string, // Format: HH:MM:SS
+  user_details: UserDetails,
   object_type: ObjectType,
 ): string {
   type QueryParams = {
     [key: string]: string | number | boolean;
   };
-
-  const object_id_map: { [key in ObjectType]: number } = {
-    [ObjectType.MOON]: 310,
-    [ObjectType.SUN]: 10,
-  };
-
-  const object_id = object_id_map[object_type];
+  const object_id = ObjectTypeMap.get(object_type);
 
   const params: QueryParams = {
     format: "json",
@@ -45,9 +42,11 @@ function GetHorizonsUrl(
     // 1 gets us the R.A.
     quantities: "'1'",
     // This is the birth location. Example: -114.00800,+46.86170,0
-    SITE_COORD: `'${location.latitude},${location.longitude},0'`,
+    SITE_COORD:
+      `'${user_details.birth_latitude},${user_details.birth_longitude},0'`,
     // This is the birth time. Example: 1994-12-09 06:58
-    TLIST: `'${date} ${time}'`,
+    // BIG TODO: Right now we do not handle time zones correctly. We assume the time zone is UT.
+    TLIST: `'${user_details.birth_date} ${user_details.birth_time}'`,
     // This ths the object type. Example: 301 for the moon.
     COMMAND: `'${object_id}'`,
   };
@@ -55,7 +54,6 @@ function GetHorizonsUrl(
   const base_url = "https://ssd.jpl.nasa.gov";
   const url_path = "/api/horizons.api";
   const url = new URL(url_path, base_url);
-
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.append(key, value.toString());
   }
@@ -100,33 +98,27 @@ function ExtractRA(data: HorizonData): string {
 }
 
 async function FetchObjectRa(
-  location: Location,
-  date: string, // Format: YYYY-MM-DD
-  time: string, // Format: HH:MM:SS
+  user_details: UserDetails,
   object_type: ObjectType,
-): Promise<string> {
-  const url = GetHorizonsUrl(location, date, time, object_type);
-  console.log(url);
+): Promise<RA> {
+  const url = GetHorizonsUrl(user_details, object_type);
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to reach URL: " + url);
   }
   const horizon_data: HorizonData = await response.json();
   const object_ra = ExtractRA(horizon_data);
-  return object_ra;
-}
-
-async function GetObjectZodiacSign(
-  location: Location,
-  date: string, // Format: YYYY-MM-DD
-  time: string, // Format: HH:MM:SS
-  object_type: ObjectType,
-): Promise<ZodiacSign> {
-  const ra = await FetchObjectRa(location, date, time, object_type);
-
-  const [hours, minutes, seconds] = ra.split(" ").map((value) =>
+  const [hours, minutes, seconds] = object_ra.split(" ").map((value) =>
     parseFloat(value)
   );
+  const ra: RA = { hours, minutes, seconds };
+  return ra;
+}
+
+function GetObjectZodiacSign(ra: RA): ZodiacSign {
+  const hours = ra.hours;
+  const minutes = ra.minutes;
+  const seconds = ra.seconds;
 
   if (
     hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60 || seconds < 0 ||
@@ -151,11 +143,9 @@ async function GetObjectZodiacSign(
   return "Pisces";
 }
 
-// Birthday in GMT.
-// const date = new Date("Thursday, December 8, 1994 6:57:00 PM");
 // const location: Location = { latitude: -114.00800, longitude: 46.86170 };
 // const object_type = ObjectType.SUN;
-// console.log(await GetObjectZodiacSign(location, date, object_type));
+// console.log(await GetObjectZodiacSign(location, "1994-12-08", "23:57", object_type));
 
-export { GetObjectZodiacSign, ObjectType };
-export type { ZodiacSign };
+export { GetObjectZodiacSign, FetchObjectRa, ObjectTypeMap };
+export type { ObjectType, ZodiacSign };
