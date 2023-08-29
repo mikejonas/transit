@@ -1,10 +1,28 @@
 import { UserDetails } from "./database_helpers/user_details_database.ts";
 
-type ObjectType = "Moon" | "Sun";
+type ObjectType =
+  | "Moon"
+  | "Sun"
+  | "Mercury"
+  | "Venus"
+  | "Mars"
+  | "Jupiter"
+  | "Saturn"
+  | "Uranus"
+  | "Neptune"
+  | "Pluto";
 
 const ObjectTypeMap: Map<ObjectType, number> = new Map([
   ["Moon", 310],
   ["Sun", 10],
+  ["Mercury", 199],
+  ["Venus", 299],
+  ["Mars", 499],
+  ["Jupiter", 599],
+  ["Saturn", 699],
+  ["Uranus", 799],
+  ["Neptune", 899],
+  ["Pluto", 999],
 ]);
 
 type ZodiacSign =
@@ -147,5 +165,5 @@ function GetObjectZodiacSign(ra: RA): ZodiacSign {
 // const object_type = ObjectType.SUN;
 // console.log(await GetObjectZodiacSign(location, "1994-12-08", "23:57", object_type));
 
-export { GetObjectZodiacSign, FetchObjectRa, ObjectTypeMap };
+export { FetchObjectRa, GetObjectZodiacSign, ObjectTypeMap };
 export type { ObjectType, ZodiacSign };
