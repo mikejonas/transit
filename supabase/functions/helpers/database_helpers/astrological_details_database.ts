@@ -1,20 +1,21 @@
 import { SupabaseClient } from "SupabaseClient";
 import {
-  FetchObjectRa,
-  GetObjectZodiacSign,
+  AstrologicalReport,
+  DateTimeAndLocation,
+  GenerateAstrologicalReport,
   ObjectType,
-  ObjectTypeMap,
   ZodiacSign,
 } from "../astrology.ts";
 import { UserDetails } from "./user_details_database.ts";
 
+// Represents a row in the "Astrological Details" table.
 interface AstrologicalDetail {
   astrological_details_id: number;
+  // Will be null if this is a "system report".
   user_id: string;
-  sign_name: string;
-  sign: ZodiacSign;
-  hours: number;
-  minutes: number;
+  astrological_report: AstrologicalReport;
+  // If true, this is a "system report"
+  system_report: boolean;
 }
 
 class AstrologicalDetailsDatabase {
@@ -24,41 +25,50 @@ class AstrologicalDetailsDatabase {
     this.supabase = supabase;
   }
 
-  public async AddAstrologicalDetailsForUser(
+  public async AddAstrologicalDetailForUser(
     user_details: UserDetails,
+    update = false,
   ): Promise<void> {
     console.log("Adding astrological details for user.");
-    const to_insert: {
-      user_id: string;
-      sign_name: string;
-      sign: ZodiacSign;
-      hours: number;
-      minutes: number;
-    }[] = [];
-    for (const object_type of ObjectTypeMap.keys()) {
-      // TODO: This is going to be slow because we call them in series.
-      const ra = await FetchObjectRa(user_details, object_type);
-      const sign = GetObjectZodiacSign(ra);
-      to_insert.push({
+    const date_time_and_location: DateTimeAndLocation = {
+      date: user_details.birth_date,
+      time: user_details.birth_time,
+      latitude: user_details.birth_latitude,
+      longitude: user_details.birth_longitude,
+    };
+
+    const astrological_report = await GenerateAstrologicalReport(
+      date_time_and_location,
+    );
+
+    console.log("Astrological Report: ", astrological_report);
+    if (update) {
+      const { error } = await this.supabase.from(
+        "Astrological Details",
+      ).update({
+        astrological_report: astrological_report,
+        system_report: false,
+      }).eq("user_id", user_details.user_id);
+      if (error) {
+        console.log("Error: ", error);
+        throw new Error(error.message);
+      }
+    } else {
+      const { error } = await this.supabase.from(
+        "Astrological Details",
+      ).insert({
         user_id: user_details.user_id,
-        sign_name: object_type,
-        sign: sign,
-        hours: ra.hours,
-        minutes: ra.minutes,
+        astrological_report: astrological_report,
+        system_report: false,
       });
-    }
-
-    console.log("Inserting: ", to_insert);
-    const { error } = await this.supabase
-      .from("Astrological Details")
-      .insert(to_insert);
-
-    if (error) {
-      console.log("Error: ", error);
-      throw new Error(error.message);
+      if (error) {
+        console.log("Error: ", error);
+        throw new Error(error.message);
+      }
     }
   }
 
+  // Just keeping this method around for the time being to not have to adjust where it is called from.
   public async GetZodiacSign(
     user_id: string,
     object_type: ObjectType,
@@ -66,42 +76,71 @@ class AstrologicalDetailsDatabase {
     const { data, error } = await this.supabase
       .from("Astrological Details")
       .select()
-      .eq("user_id", user_id)
-      .eq("sign_name", object_type);
+      .eq("user_id", user_id).limit(1).single();
     if (error) {
       throw new Error(error.message);
     }
-    if (data.length !== 1) {
-      throw new Error("Too many rows for this object type and user id combo.");
+    const astrological_report: AstrologicalReport = data.astrological_report;
+    for (const object_report of astrological_report.object_reports) {
+      if (object_report.object_type === object_type) {
+        return object_report.sign;
+      }
     }
-    return data[0].sign;
+    throw new Error(
+      "Could not find the object type in the astrological report.",
+    );
   }
 
-  public async GetAstrologicalDetailsForUser(
+  public async GetAstrologicalDetailForUser(
     user_id: string,
-  ): Promise<AstrologicalDetail[]> {
-    const astrological_details: AstrologicalDetail[] = [];
-    const { data, error } = await this.supabase
-      .from("Astrological Details")
-      .select()
-      .eq("user_id", user_id);
+  ): Promise<AstrologicalDetail> {
+    const { data, error } = await this.supabase.from("Astrological Details")
+      .select().eq("user_id", user_id).limit(1).single();
     if (error) {
       throw new Error(error.message);
     }
-    if (data.length === 0) {
-      throw new Error("No data for this user.");
+    const astrological_detail: AstrologicalDetail = {
+      astrological_details_id: data.astrological_details_id,
+      user_id: data.user_id,
+      astrological_report: data.astrological_report,
+      system_report: data.system_report,
+    };
+    return astrological_detail;
+  }
+
+  public async GetAstrologicalDetailForSystem(): Promise<AstrologicalDetail> {
+    const { data, error } = await this.supabase.from("Astrological Details")
+      .select().eq("system_report", true).order("created_at", {
+        ascending: false,
+      }).limit(1).single();
+    if (error) {
+      throw new Error(error.message);
     }
-    for (const row of data) {
-      astrological_details.push({
-        astrological_details_id: row.astrological_details_id,
-        user_id: row.user_id,
-        sign_name: row.sign_name,
-        sign: row.sign,
-        hours: row.hours,
-        minutes: row.minutes,
-      });
+    const astrological_detail: AstrologicalDetail = {
+      astrological_details_id: data.astrological_details_id,
+      user_id: data.user_id,
+      astrological_report: data.astrological_report,
+      system_report: data.system_report,
+    };
+    return astrological_detail;
+  }
+
+  public async AddAstrologicalDetailForSystem(
+    date_time_and_location: DateTimeAndLocation,
+  ): Promise<void> {
+    const astrological_report = await GenerateAstrologicalReport(
+      date_time_and_location,
+    );
+    console.log("Astrological Report: ", astrological_report);
+    const { error } = await this.supabase.from("Astrological Details").insert({
+      astrological_report: astrological_report,
+      system_report: true,
+    });
+
+    if (error) {
+      console.log("Error: ", error);
+      throw new Error(error.message);
     }
-    return astrological_details;
   }
 }
 

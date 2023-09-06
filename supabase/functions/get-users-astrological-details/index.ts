@@ -17,8 +17,8 @@ serve(async (req) => {
     if (!user) throw new Error("User not found");
 
     const astrological_details_db = new AstrologicalDetailsDatabase(supabase);
-    const astrological_details: AstrologicalDetail[] =
-      await astrological_details_db.GetAstrologicalDetailsForUser(user.id);
+    const astrological_details: AstrologicalDetail =
+      await astrological_details_db.GetAstrologicalDetailForUser(user.id);
     return SuccessfulResponse(JSON.stringify(astrological_details));
   } catch (error) {
     return ErrorResponse(error.message);

@@ -1,4 +1,9 @@
-import { UserDetails } from "./database_helpers/user_details_database.ts";
+interface DateTimeAndLocation {
+  date: string; // Format: YYYY-MM-DD
+  time: string; // Format: HH:MM:SS
+  latitude: number;
+  longitude: number;
+}
 
 type ObjectType =
   | "Moon"
@@ -46,7 +51,7 @@ interface RA {
 }
 
 function GetHorizonsUrl(
-  user_details: UserDetails,
+  date_time_and_location: DateTimeAndLocation,
   object_type: ObjectType,
 ): string {
   type QueryParams = {
@@ -61,10 +66,10 @@ function GetHorizonsUrl(
     quantities: "'1'",
     // This is the birth location. Example: -114.00800,+46.86170,0
     SITE_COORD:
-      `'${user_details.birth_latitude},${user_details.birth_longitude},0'`,
+      `'${date_time_and_location.latitude},${date_time_and_location.longitude},0'`,
     // This is the birth time. Example: 1994-12-09 06:58
     // BIG TODO: Right now we do not handle time zones correctly. We assume the time zone is UT.
-    TLIST: `'${user_details.birth_date} ${user_details.birth_time}'`,
+    TLIST: `'${date_time_and_location.date} ${date_time_and_location.time}'`,
     // This ths the object type. Example: 301 for the moon.
     COMMAND: `'${object_id}'`,
   };
@@ -116,10 +121,10 @@ function ExtractRA(data: HorizonData): string {
 }
 
 async function FetchObjectRa(
-  user_details: UserDetails,
+  date_time_and_location: DateTimeAndLocation,
   object_type: ObjectType,
 ): Promise<RA> {
-  const url = GetHorizonsUrl(user_details, object_type);
+  const url = GetHorizonsUrl(date_time_and_location, object_type);
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to reach URL: " + url);
@@ -161,9 +166,84 @@ function GetObjectZodiacSign(ra: RA): ZodiacSign {
   return "Pisces";
 }
 
-// const location: Location = { latitude: -114.00800, longitude: 46.86170 };
-// const object_type = ObjectType.SUN;
-// console.log(await GetObjectZodiacSign(location, "1994-12-08", "23:57", object_type));
+async function IsObjectInRetrograde(
+  date_time_and_location: DateTimeAndLocation,
+  object_type: ObjectType,
+): Promise<boolean> {
+  // We might need to adjust this value for slower moving objects.
+  const days_apart = 5;
+  const ra_1 = await FetchObjectRa(date_time_and_location, object_type);
+  const birthDate = new Date(date_time_and_location.date);
+  birthDate.setDate(birthDate.getDate() - days_apart);
+  const second_date_time_and_location: DateTimeAndLocation = {
+    date: birthDate.toISOString().split("T")[0],
+    time: date_time_and_location.time,
+    latitude: date_time_and_location.latitude,
+    longitude: date_time_and_location.longitude,
+  };
 
-export { FetchObjectRa, GetObjectZodiacSign, ObjectTypeMap };
-export type { ObjectType, ZodiacSign };
+  // Fetch the RA of the object for the new date
+  const ra_2 = await FetchObjectRa(second_date_time_and_location, object_type);
+
+  // Calculate the difference in RA between the two dates
+  const ra_diff = (ra_1.hours + ra_1.minutes / 60 + ra_1.seconds / 3600) -
+    (ra_2.hours + ra_2.minutes / 60 + ra_2.seconds / 3600);
+
+  // If the difference is negative, the object is in retrograde motion
+  return ra_diff < 0;
+}
+
+interface ObjectReport {
+  object_type: ObjectType;
+  sign: ZodiacSign;
+  is_in_retrograde: boolean;
+  ra: RA;
+}
+
+interface AstrologicalReport {
+  date_time_and_location: DateTimeAndLocation;
+  object_reports: ObjectReport[];
+}
+
+async function GenerateAstrologicalReport(
+  date_time_and_location: DateTimeAndLocation,
+) {
+  const object_reports: ObjectReport[] = [];
+  for (const object_type of ObjectTypeMap.keys()) {
+    const ra = await FetchObjectRa(date_time_and_location, object_type);
+    const sign = GetObjectZodiacSign(ra);
+    let is_in_retrograde = false;
+    if (object_type !== "Moon" && object_type !== "Sun") {
+      is_in_retrograde = await IsObjectInRetrograde(
+        date_time_and_location,
+        object_type,
+      );
+    }
+    object_reports.push({
+      object_type: object_type,
+      sign: sign,
+      is_in_retrograde: is_in_retrograde,
+      ra: ra,
+    });
+  }
+  const astrological_report: AstrologicalReport = {
+    date_time_and_location: date_time_and_location,
+    object_reports: object_reports,
+  };
+  return astrological_report;
+}
+
+export {
+  FetchObjectRa,
+  GenerateAstrologicalReport,
+  GetObjectZodiacSign,
+  IsObjectInRetrograde,
+  ObjectTypeMap,
+};
+export type {
+  AstrologicalReport,
+  DateTimeAndLocation,
+  ObjectReport,
+  ObjectType,
+  ZodiacSign,
+};

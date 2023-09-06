@@ -17,7 +17,6 @@ serve(async (req) => {
     global: { headers: { Authorization: req.headers.get("Authorization")! } },
   });
   const user_details_db = new UserDetailsDatabase(supabase);
-  console.log("Hey its me!!!!");
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("User not found");
@@ -37,7 +36,10 @@ serve(async (req) => {
     const updated = await user_details_db.UpdateUserDetails(user_details);
     if (updated) {
       const astrological_details_db = new AstrologicalDetailsDatabase(supabase);
-      await astrological_details_db.AddAstrologicalDetailsForUser(user_details);
+      await astrological_details_db.AddAstrologicalDetailForUser(
+        user_details,
+        /* update= */ true,
+      );
       return SuccessfulResponse("Succesfully updated user details.");
     } else {
       return ErrorResponse(
@@ -45,7 +47,6 @@ serve(async (req) => {
       );
     }
   } catch (error) {
-    console.log("Hey its me!!!");
     return ErrorResponse(error.message);
   }
 });

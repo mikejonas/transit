@@ -40,7 +40,7 @@ serve(async (req) => {
     const added = await user_details_db.AddUserDetails(user_details);
     if (added) {
       const astrological_details_db = new AstrologicalDetailsDatabase(supabase);
-      await astrological_details_db.AddAstrologicalDetailsForUser(user_details);
+      await astrological_details_db.AddAstrologicalDetailForUser(user_details);
       return SuccessfulResponse(JSON.stringify(user_details));
     } else {
       return ErrorResponse("Failure to add user details for unknown reason.");
