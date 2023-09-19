@@ -1,19 +1,25 @@
+// this is from when we just did chat. Keeping it for now, incase we want to easily reference it.
+
 import * as React from 'react'
 import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
-import { createDrawerNavigator, DrawerNavigationProp } from '@react-navigation/drawer'
+import { createDrawerNavigator } from '@react-navigation/drawer'
 import { RouteProp } from '@react-navigation/native'
 import Text from 'components/Text'
 import { StackNavigatorParams } from 'navigators/AppNavigator'
 import { requests } from 'requests'
-import TransitList from 'screens/TransitList'
+import ChatScreen from 'screens/Chat'
 import { darkTheme } from 'theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
 
-export type DrawerNavigatorParams = {
-  TransitList: { conversationId?: number }
+export type MainNavigatorProps = {
+  route: RouteProp<StackNavigatorParams, 'MainNavigator'>
 }
-export type MainNavigatorProp = DrawerNavigationProp<StackNavigatorParams, 'MainNavigator'>
+export type DrawerNavigatorParams = {
+  DailyHoroscope: { conversationId?: number }
+  WeeklyHoroscope: { conversationId?: number }
+  MonthlyHoroscope: { conversationId?: number }
+}
 
 const Drawer = createDrawerNavigator<DrawerNavigatorParams>()
 
@@ -25,10 +31,6 @@ const renderLabel = ({ focused, label }: { focused: boolean; label: string }) =>
   </Text>
 )
 const DrawerLabel = (label: string) => (props: any) => renderLabel({ ...props, label })
-
-export type MainNavigatorProps = {
-  route: RouteProp<StackNavigatorParams, 'MainNavigator'>
-}
 
 const MainNavigator: React.FC<MainNavigatorProps> = () => {
   const [conversationId, setConversationId] = React.useState<number | undefined>()
@@ -57,8 +59,9 @@ const MainNavigator: React.FC<MainNavigatorProps> = () => {
     <>
       <StatusBar barStyle="light-content" />
       <Drawer.Navigator
-        initialRouteName="TransitList"
+        initialRouteName="DailyHoroscope"
         screenOptions={{
+          // example of using custom styling from restyle
           drawerActiveTintColor: darkTheme.colors.title,
           drawerInactiveTintColor: darkTheme.colors.text,
           drawerStyle: {
@@ -74,15 +77,42 @@ const MainNavigator: React.FC<MainNavigatorProps> = () => {
         }}
         drawerContent={CustomDrawerContent}>
         <Drawer.Screen
-          name="TransitList"
-          component={TransitList}
+          name="DailyHoroscope"
+          component={ChatScreen}
           initialParams={{ conversationId }}
           options={{
-            headerTitle: 'Transit',
+            headerTitle: 'Today',
             headerTitleStyle: {
               color: 'white',
             },
-            drawerLabel: DrawerLabel('Transit'),
+            // Example of using a custom label component
+            drawerLabel: DrawerLabel('Today'),
+          }}
+        />
+        <Drawer.Screen
+          name="WeeklyHoroscope"
+          component={ChatScreen}
+          initialParams={{ conversationId }}
+          options={{
+            headerTitle: 'This Week',
+            headerTitleStyle: {
+              color: 'white',
+            },
+            // Example of using a custom label component
+            drawerLabel: DrawerLabel('This week'),
+          }}
+        />
+        <Drawer.Screen
+          name="MonthlyHoroscope"
+          component={ChatScreen}
+          initialParams={{ conversationId }}
+          options={{
+            headerTitle: 'This Month',
+            headerTitleStyle: {
+              color: 'white',
+            },
+            // Example of using a custom label component
+            drawerLabel: DrawerLabel('This month'),
           }}
         />
       </Drawer.Navigator>

@@ -6,8 +6,15 @@ const palette = {
   vibrantBlue: '#7289DA',
   vibrantPurple: '#8530C8',
   black: '#000',
-  charcoal: '#1c1c22',
-  darkGrey: '#333333',
+  gray1: '#161616',
+  gray2: '#333',
+  gray3: '#555',
+  gray4: '#777',
+  gray5: '#999',
+  gray6: '#bbb',
+  gray7: '#ccc',
+  gray8: '#ddd',
+  gray9: '#eee',
   mediumGrey: '#666',
   lightGrey: '#999',
   offWhite: '#ccc',
@@ -22,6 +29,7 @@ const baseTheme = createTheme({
     background: '',
     cardPrimaryBackground: '',
     cardSecondaryBackground: '',
+    lightBorder: '',
     title: '',
     text: '',
     textSecondary: '', // light graey
@@ -76,14 +84,15 @@ const baseTheme = createTheme({
 export const darkTheme = createTheme({
   ...baseTheme,
   colors: {
-    background: palette.charcoal,
-    cardPrimaryBackground: palette.charcoal,
+    background: palette.gray1,
+    cardPrimaryBackground: palette.gray1,
     cardSecondaryBackground: palette.softBlue,
     title: palette.white,
     text: palette.white,
     textSecondary: palette.lightGrey,
     error: palette.red,
     buttonPurple: palette.vibrantPurple,
+    lightBorder: palette.gray6,
   },
 })
 
@@ -98,6 +107,7 @@ export const lightTheme = createTheme({
     textSecondary: palette.black,
     error: palette.red,
     buttonPurple: palette.vibrantPurple,
+    lightBorder: palette.gray6,
   },
 })
 

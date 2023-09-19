@@ -8,6 +8,7 @@ import MainNavigator from 'navigators/MainNavigator'
 import { requests } from 'requests'
 import Auth from 'screens/Auth'
 import InitialLoadingScreen from 'screens/InitialLoading'
+import TransitDetails from 'screens/TransitDetails'
 import UserDetails from 'screens/UserDetails'
 import { Theme } from 'theme/restyle'
 
@@ -16,6 +17,7 @@ export type StackNavigatorParams = {
   Loading: undefined
   MainNavigator: undefined
   UserDetails: { userId?: string }
+  TransitHoroscope: { conversationId?: number }
 }
 export type AppNavigationProp = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
 
@@ -103,6 +105,26 @@ const AppNavigator = () => {
           component={UserDetails}
           options={{
             headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="TransitHoroscope"
+          component={TransitDetails}
+          initialParams={{ conversationId: 0 }}
+          options={{
+            headerTitle: 'Transit',
+            headerBackTitle: ' ', // This will remove the label next to the back button
+            animationEnabled: true, // Enable animation for this screen
+            headerStyle: {
+              backgroundColor: theme.colors.background,
+              borderBottomWidth: 0,
+              shadowOpacity: 0, // Remove shadow for iOS
+              elevation: 0, // Remove shadow for Android
+            },
+            headerTitleStyle: {
+              color: 'white',
+            },
+            headerTintColor: 'white',
           }}
         />
       </Stack.Navigator>

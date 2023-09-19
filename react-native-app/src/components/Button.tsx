@@ -6,6 +6,7 @@ import Icon, { IconNames } from './Icon' // ensure this path is correct
 type ButtonSize = 'small' | 'medium'
 
 interface ButtonProps {
+  children?: React.ReactNode
   title?: string
   onPress: () => void
   color?: string
@@ -15,6 +16,7 @@ interface ButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({
+  children,
   title,
   onPress,
   color = '#000000',
@@ -35,6 +37,7 @@ const Button: React.FC<ButtonProps> = ({
       <View style={styles.content}>
         {icon && <Icon name={icon} size={12} />}
         {title && <Text style={styles.text}>{title}</Text>}
+        {children && children}
       </View>
     </Pressable>
   )
