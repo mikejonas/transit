@@ -1,0 +1,20 @@
+{
+  "answer": "Yes, you are being true to yourself. With the Sun trine your natal Venus, your focus on resources is enhancing your ability to express yourself authentically and attract positive experiences in romance and creativity. This alignment lasts until September 21. Your ability to practice self-control in pursuing pleasurable experiences allows you to maintain a sense of personal integrity and alignment with your true self. Your authenticity shines brightest when you honor your own needs and desires, while also considering the well-being of others.",
+  "answerId": 4295365,
+  "createdAt": "2023-09-21T05:40:33.906682771Z",
+  "natalChart": { "Sun": "Taurus" },
+  "questionId": 5166402,
+  "transits": [
+    {
+      "aspect": "Trine",
+      "forDay": "2023-09-21",
+      "natalPlanet": "Venus",
+      "natalPlanetLocation": 0.98152345,
+      "natalPlanetSign": "Taurus",
+      "transitId": 13847822,
+      "transitingPlanet": "Sun",
+      "transitingPlanetLocation": 3.10548253,
+      "transitingPlanetSign": "Virgo"
+    }
+  ]
+}

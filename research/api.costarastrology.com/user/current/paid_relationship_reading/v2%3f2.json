@@ -1,0 +1,30 @@
+{
+  "categoryReadings": [
+    {
+      "paidReadingAttribution": { "Moon": "Libra", "Sun": "Taurus" },
+      "paidReadingCategory": "Where you're coming from",
+      "paidReadingText": "Unpleasant things happened in your childhood. It put a kind of equilibrium inside of you, but it also tampered with your foundation. You survived by convincing yourself that you like to smile on the outside as you suffer internally.\nYou always believed that nothing should be allowed to distort life's balance. This had the unfortunate side-effect of making you feel like you had to contort yourself into something that was palatable. You prioritized external security over internal security. You sca"
+    },
+    {
+      "paidReadingAttribution": { "Mars": "Capricorn", "Venus": "Taurus" },
+      "paidReadingCategory": "In a relationship",
+      "paidReadingText": ""
+    },
+    {
+      "paidReadingAttribution": { "Mars": "Capricorn" },
+      "paidReadingCategory": "When things go wrong",
+      "paidReadingText": ""
+    },
+    {
+      "paidReadingAttribution": { "Moon": "Libra" },
+      "paidReadingCategory": "What you need",
+      "paidReadingText": "You need to be with someone who demands that you appreciate messiness. You need someone who will be charmed by your secret discontent. You need someone who isn’t scared to teach you how to take your time.\nYour well-curated existence communicates the opposite of what you intend it to. You need someone who can see right through your well-groomed exterior, but who also knows the difference between your drive to create internal equilibrium and your obsession with evening the scales at any cost. You "
+    },
+    {
+      "paidReadingAttribution": { "Sun": "Taurus" },
+      "paidReadingCategory": "Your mission",
+      "paidReadingText": ""
+    }
+  ],
+  "paidOn": null
+}

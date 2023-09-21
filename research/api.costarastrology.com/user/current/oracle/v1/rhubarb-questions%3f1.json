@@ -1,0 +1,51 @@
+{
+  "categoryQuestions": {
+    "expression": [
+      { "question": "What is a truth that I've been ignoring?" },
+      { "question": "Should I start a cult?" },
+      { "question": "Am I a poet?" },
+      { "question": "What do people say about me behind my back?" },
+      { "question": "Should I confess my feelings?" },
+      { "question": "Should I be nice or should I be honest?" },
+      { "question": "How do I make it obvious that I'm trying to flirt?" },
+      { "question": "Should I lie to them?" },
+      { "question": "Should I speak up, or should I stay quiet?" }
+    ],
+    "love": [
+      { "question": "Have I met my soulmate?" },
+      { "question": "Will I ever find love?" },
+      { "question": "What's my type?" },
+      { "question": "What should I be looking for in a partner?" },
+      { "question": "How do I get them to be obsessed with me?" },
+      { "question": "Will I be single forever?" },
+      { "question": "What does true love feel like?" },
+      { "question": "Do they like me back?" },
+      { "question": "Am I actually in love?" }
+    ],
+    "self": [
+      { "question": "Who am I really?" },
+      { "question": "What should I be doing with my life?" },
+      { "question": "What are my red flags?" },
+      { "question": "What are my green flags?" },
+      { "question": "Am I being true to myself?" },
+      { "question": "How do I find meaning?" },
+      { "question": "What should I avoid?" },
+      { "question": "Do I have a strange and mysterious aura?" },
+      { "question": "Am I self-sabotaging?" },
+      { "question": "Can I read minds?" },
+      { "question": "Should I move to a farm?" }
+    ],
+    "work": [
+      { "question": "Will I be successful?" },
+      { "question": "What goal should I set for myself?" },
+      { "question": "Should I quit my job?" },
+      { "question": "How do I make more money?" },
+      { "question": "Am I in the right career?" },
+      { "question": "Will I ever be rich?" },
+      { "question": "How should I be spending my time?" },
+      { "question": "Should I become a DJ?" },
+      { "question": "Should I go back to school?" },
+      { "question": "Should I start my own business?" }
+    ]
+  }
+}

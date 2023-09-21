@@ -1,0 +1,34 @@
+[
+  {
+    "contents": {
+      "title": "Your Taurus Sun knows how to serve others. Give yourself a push.",
+      "titleValueIds": [
+        1573093276176693860, 1573093276176577335, 1573093276176604041
+      ]
+    },
+    "type": "ChaosMode"
+  },
+  {
+    "contents": {
+      "body": "Today, things feel out of your control. You fixate on their image. You scroll through their ex's social and accidentally like something from three years ago. Examine difficult relationships. Look at the interactions over time between you and the other person. You already know where the line is, and that's a start. ",
+      "bodyValueIds": [
+        1575908025943804972, 1575908025943804570, 1575908025943695833,
+        1575908025943801234, 1575908025943727346
+      ],
+      "columnOne": {
+        "items": ["Long game", "Passing promise", "Library crush"],
+        "title": "Do",
+        "valueIds": [1572952538688415438]
+      },
+      "columnTwo": {
+        "items": ["Mind games", "Roll the dice", "Clickbait"],
+        "title": "Don't",
+        "valueIds": [1574254360455705743]
+      },
+      "date": "2023-09-20",
+      "title": "It takes courage to face your own desires.",
+      "titleValueIds": [1572618287153599881]
+    },
+    "type": "SelfModule"
+  }
+]
