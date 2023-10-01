@@ -108,6 +108,25 @@ class AstrologicalDetailsDatabase {
     return astrological_detail;
   }
 
+  public async GetAstrologicalDetailsForToday(): Promise<AstrologicalDetail> {
+    const most_recent_astrological_detail = await this
+      .GetAstrologicalDetailForSystem();
+    if (
+      most_recent_astrological_detail.astrological_report.date_time_and_location
+        .date === new Date().toISOString().split("T")[0]
+    ) {
+      return most_recent_astrological_detail;
+    }
+    const date_time_and_location: DateTimeAndLocation = {
+      date: new Date().toISOString().split("T")[0],
+      time: "12:00",
+      latitude: 0,
+      longitude: 0,
+    };
+    await this.AddAstrologicalDetailForSystem(date_time_and_location);
+    return await this.GetAstrologicalDetailForSystem();
+  }
+
   public async GetAstrologicalDetailForSystem(): Promise<AstrologicalDetail> {
     const { data, error } = await this.supabase.from("Astrological Details")
       .select().eq("system_report", true).order("created_at", {

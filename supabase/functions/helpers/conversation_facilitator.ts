@@ -35,6 +35,52 @@ class ConversationFacilitator {
     this.astrological_details_db = new AstrologicalDetailsDatabase(supabase);
   }
 
+  public async AskQuestion(
+    user_id: string,
+    question_category: string,
+    question_content: string,
+  ): Promise<Message> {
+    console.log(
+      "question_category is unused so logging for now: ",
+      question_category,
+    );
+    const users_astrological_details: AstrologicalDetail = await this
+      .astrological_details_db.GetAstrologicalDetailForUser(user_id);
+    // We should an offline process that adds the current astrological report for the day to the database. For now we will just add a new one.
+    const system_astrological_details: AstrologicalDetail = await this
+      .astrological_details_db.GetAstrologicalDetailsForToday();
+    const system_message =
+      "You are an astrologer who specializes in reading horoscopes. Every response must be less than two paragraphs. You are speaking to a user with the following birth information: " +
+      JSON.stringify(users_astrological_details.astrological_report) +
+      ". And the current astrological report for day is: " +
+      JSON.stringify(system_astrological_details.astrological_report) + ".";
+    const conversation = await this.NewConversation(user_id);
+
+    const open_ai_system_message = await this.messages_database.AddMessage(
+      user_id,
+      conversation.conversation_id,
+      "system",
+      system_message,
+    );
+    const open_ai_user_message = await this.messages_database.AddMessage(
+      user_id,
+      conversation.conversation_id,
+      "user",
+      question_content,
+    );
+    const assistant_response = await this.TalkToOpenAi([
+      open_ai_system_message,
+      open_ai_user_message,
+    ]);
+    const first_message = await this.messages_database.AddMessage(
+      user_id,
+      conversation.conversation_id,
+      "assistant",
+      assistant_response,
+    );
+    return first_message;
+  }
+
   // Inserts a new conversation row into the conversation table. Does not change the messages table.
   public async NewConversation(user_id: string): Promise<Conversation> {
     if (!await this.user_details_db.DoesUserExist(user_id)) {
