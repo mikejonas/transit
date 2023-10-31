@@ -1,6 +1,3 @@
 <resources>
     <string name="app_name">ReactNativeApp</string>
-    <!-- added for appcenter support. Remove this if we don't use appcenter -->
-    <string name="appCenterAnalytics_whenToEnableAnalytics">ALWAYS_SEND</string>
-    <string name="appCenterCrashes_whenToSendCrashes">ALWAYS_SEND</string>
 </resources>
