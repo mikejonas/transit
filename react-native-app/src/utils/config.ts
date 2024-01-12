@@ -2,16 +2,17 @@
  * Use this file to export public configs related to the app environment (prod, local, ect...)
  **/
 
-import { APP_ENV } from '@env'
+const environment = process.env.EXPO_PUBLIC_APP_ENV as string
+const supabaseDevUrl = process.env.EXPO_PUBLIC_SUPABASE_DEV_URL as string
+const supabaseProdUrl = process.env.EXPO_PUBLIC_SUPABASE_PROD_URL as string
 
-const environment = APP_ENV // 'prod' or 'local'
-if (environment !== 'prod' && environment !== 'local') {
-  throw new Error(`APP_ENV must be 'prod' or 'local'`)
+if (environment !== 'prod' && environment !== 'dev') {
+  throw new Error(`APP_ENV must be 'prod' or 'dev'`)
 }
 
 const supabaseUrls = {
-  local: 'http://localhost:54321',
-  prod: 'https://evsqlmjsaibcaccunysk.supabase.co',
+  dev: supabaseDevUrl,
+  prod: supabaseProdUrl,
 }
-
+console.log(supabaseUrls)
 export const supabaseUrl = supabaseUrls[environment]
