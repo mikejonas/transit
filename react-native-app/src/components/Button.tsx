@@ -1,44 +1,55 @@
 import React from 'react'
-import { Pressable, Text, StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, View, ActivityIndicator } from 'react-native'
 import adjustColorBrightness from 'utils/adjustColorBrightness'
 import Icon, { IconNames } from './Icon' // ensure this path is correct
-
+import Box from 'components/Box'
+import Text from 'components/Text'
 type ButtonSize = 'small' | 'medium'
 
 interface ButtonProps {
   children?: React.ReactNode
   title?: string
   onPress: () => void
-  color?: string
+  backgroundColor?: string
   icon?: IconNames
   isLoading?: boolean
   size?: ButtonSize
+  disabled?: boolean
 }
 
 const Button: React.FC<ButtonProps> = ({
   children,
   title,
   onPress,
-  color = '#000000',
   icon,
+  isLoading = false,
   size = 'small',
+  disabled = false,
 }) => {
-  const pressedColor = adjustColorBrightness(color, 0.25)
+  const backgroundColor = disabled ? '#555555' : '#ffffff'
+
+  const pressedColor = adjustColorBrightness(backgroundColor, disabled ? 0 : -0.2)
   const buttonSize = size === 'small' ? styles.small : styles.medium
 
   return (
     <Pressable
       style={({ pressed }) =>
         pressed
-          ? [buttonSize, { backgroundColor: pressedColor }]
-          : [buttonSize, { backgroundColor: color }]
+          ? { ...buttonSize, backgroundColor: pressedColor }
+          : { ...buttonSize, backgroundColor }
       }
-      onPress={onPress}>
-      <View style={styles.content}>
-        {icon && <Icon name={icon} size={12} />}
-        {title && <Text style={styles.text}>{title}</Text>}
-        {children && children}
-      </View>
+      onPress={isLoading ? undefined : onPress}
+      disabled={isLoading}>
+      <Box flexDirection="row" alignItems="center">
+        {isLoading ? <ActivityIndicator color="#000000" /> : null}
+        {icon && !isLoading && <Icon name={icon} size={12} />}
+        {title && !isLoading && (
+          <Text style={styles.text} color={disabled ? 'text' : 'background'} fontWeight={'500'}>
+            {title}
+          </Text>
+        )}
+        {!isLoading && children}
+      </Box>
     </Pressable>
   )
 }
@@ -60,13 +71,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     elevation: 2,
   },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   text: {
-    color: 'white',
-    fontWeight: 'bold',
     textAlign: 'center',
     marginLeft: 10, // add space between the icon and the text
   },

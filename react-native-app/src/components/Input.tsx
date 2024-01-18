@@ -12,7 +12,6 @@ const Input = ({ ...props }: InputProps) => {
   const theme = useTheme<Theme>()
 
   const textColor = theme.colors.text
-  const borderColor = adjustColorBrightness(textColor, -0.7)
   const placeholderTextColor = adjustColorBrightness(theme.colors.text, -0.25)
 
   return (
@@ -20,12 +19,12 @@ const Input = ({ ...props }: InputProps) => {
       <RNTextInput
         {...props}
         style={{
-          height: 40,
+          backgroundColor: 'rgba(255, 255, 255, 0.04)',
+          borderRadius: 16,
+          height: 54,
           width: '100%',
-          borderColor: borderColor,
-          borderWidth: 1,
-          borderRadius: 20,
-          padding: 10,
+          padding: 16,
+          paddingHorizontal: 24,
           color: textColor,
         }}
         placeholderTextColor={placeholderTextColor}

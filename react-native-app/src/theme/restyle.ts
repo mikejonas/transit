@@ -20,7 +20,7 @@ const palette = {
   offWhite: '#ccc',
   whiteSmoke: '#f5f5f5',
   white: '#FFFFFF',
-  red: '#ff5353',
+  red: '#ec7373',
 }
 
 // default theme structure. Modify colors in the exported themes below
@@ -48,20 +48,28 @@ const baseTheme = createTheme({
     tablet: 768,
   },
   textVariants: {
-    defaults: {
-      fontSize: 17,
-      color: 'text',
-    },
+    defaults: { fontSize: 15, lineHeight: 22, color: "text" }, // body
     header: {
       fontSize: 32,
       fontWeight: 'bold',
       color: 'title',
     },
-    body: {
-      fontSize: 17,
-      lineHeight: 24,
-      color: 'text',
-    },
+    // tabNav: { fontSize: '10px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // smallCaption: { fontSize: '11px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // legalFootnote: { fontSize: '11px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // caption: { fontSize: '13px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // smallContent: { fontSize: '13px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    body: { fontSize: 15, lineHeight: 22 },
+    sectionTitle: { fontSize: 20},
+    // listSecondary: { fontSize: '15px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // bodyLarge: { fontSize: '17px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // listPrimary: { fontSize: '17px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // navbar: { fontSize: '17px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // button: { fontSize: '17px', fontFamily: 'SFText', letterSpacing: 'normal', lineHeight: 'normal' },
+    // smallTitle: { fontSize: '19px', fontFamily: 'SFDisplay', letterSpacing: 'normal', lineHeight: 'normal' },
+    // bannerTitle: { fontSize: '24px', fontFamily: 'SFDisplay', letterSpacing: 'normal', lineHeight: 'normal' },
+    // bigTitle: { fontSize: '28px', fontFamily: 'SFDisplay', letterSpacing: 'normal', lineHeight: 'normal' },
+    // headerTitle: { fontSize: '34px', fontFamily: 'SFDisplay', letterSpacing: 'normal', lineHeight: 'normal' },
     error: {
       fontSize: 12,
       color: 'error',
