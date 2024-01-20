@@ -4,6 +4,7 @@ import adjustColorBrightness from 'utils/adjustColorBrightness'
 import Icon, { IconNames } from './Icon' // ensure this path is correct
 import Box from 'components/Box'
 import Text from 'components/Text'
+
 type ButtonSize = 'small' | 'medium'
 
 interface ButtonProps {
@@ -11,7 +12,7 @@ interface ButtonProps {
   title?: string
   onPress: () => void
   backgroundColor?: string
-  icon?: IconNames
+  icon?: React.ReactNode
   isLoading?: boolean
   size?: ButtonSize
   disabled?: boolean
@@ -67,9 +68,9 @@ const Button: React.FC<ButtonProps> = ({
       disabled={isLoading}>
       <Box flexDirection="row" alignItems="center">
         {isLoading ? <ActivityIndicator color="#000000" /> : null}
-        {icon && !isLoading && <Icon name={icon} size={12} />}
+        {icon && <Box mr="s">{icon}</Box>}
         {title && !isLoading && (
-          <Text style={{ ...styles.text, color: textColor }} fontWeight={'500'}>
+          <Text style={{ color: textColor }} fontSize={16} fontWeight={'500'}>
             {title}
           </Text>
         )}
@@ -95,10 +96,6 @@ const styles = StyleSheet.create({
     minWidth: 48,
     borderRadius: 30,
     elevation: 2,
-  },
-  text: {
-    textAlign: 'center',
-    marginLeft: 10, // add space between the icon and the text
   },
 })
 

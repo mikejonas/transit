@@ -7,6 +7,8 @@ import { requests } from 'requests'
 import { Alert, Dimensions, Image } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigationProps } from 'navigators/AuthNavigator'
+import GoogleLogo from '../../../assets/google-logo.svg'
+import AppleLogo from '../../../assets/apple-logo.svg'
 
 const screenWidth = Dimensions.get('window').width
 const screenHeight = Dimensions.get('window').height
@@ -17,7 +19,7 @@ const contentHeight = screenHeight - imageHeight
 const Auth = () => {
   const navigation = useNavigation<AuthNavigationProps>()
   const triggerNotImplementedAlert = () => {
-    Alert.alert('Not yet implemented', 'Sign up wtih email for now', [
+    Alert.alert('Not implemented', 'Continue with email for now', [
       { text: 'OK', onPress: () => console.log('OK Pressed') },
     ])
   }
@@ -43,15 +45,25 @@ const Auth = () => {
     return (
       <>
         <Box mb="m">
-          <Button size="medium" title="Continue with Apple" onPress={triggerNotImplementedAlert} />
+          <Button
+            icon={<AppleLogo height={14} width={14} />}
+            size="medium"
+            title="Continue with Apple"
+            onPress={triggerNotImplementedAlert}
+          />
         </Box>
         <Box mb="m">
-          <Button size="medium" title="Continue with Google" onPress={triggerNotImplementedAlert} />
+          <Button
+            icon={<GoogleLogo height={14} width={14} />}
+            size="medium"
+            title="Continue with Google"
+            onPress={triggerNotImplementedAlert}
+          />
         </Box>
         <Box mb="m">
           <Button
             size="medium"
-            title="Continue with Email"
+            title="Continue with email"
             varient="secondary"
             onPress={() => navigation.navigate('SignUpWithEmail')}
           />
@@ -62,7 +74,7 @@ const Auth = () => {
 
   const renderPrivacyAndTerms = () => {
     return (
-      <Box marginTop="m" flexDirection="row" alignItems="center" justifyContent="center">
+      <Box flexDirection="row" alignItems="center" justifyContent="center">
         <Textbutton onPress={() => console.log('Privacy Policy')}>Privacy Policy</Textbutton>
         <Box width={30} />
         <Textbutton onPress={() => console.log('Terms of Service')}>Terms of Service</Textbutton>
