@@ -6,7 +6,7 @@ import { useTheme } from '@shopify/restyle'
 import { Session } from '@supabase/supabase-js'
 import MainNavigator from 'navigators/MainNavigator'
 import { requests } from 'requests'
-import Auth from 'screens/Auth'
+import Auth from 'navigators/AuthNavigator'
 import InitialLoadingScreen from 'screens/InitialLoading'
 import TransitDetails from 'screens/TransitDetails'
 import UserDetails from 'screens/UserDetails'
@@ -19,12 +19,12 @@ export type StackNavigatorParams = {
   UserDetails: { userId?: string }
   TransitHoroscope: { conversationId?: number }
 }
-export type AppNavigationProp = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
+export type AppNavigationProps = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
 
 const Stack = createStackNavigator<StackNavigatorParams>()
 
 const AppNavigator = () => {
-  const navigation = useNavigation<AppNavigationProp>()
+  const navigation = useNavigation<AppNavigationProps>()
   const theme = useTheme<Theme>()
   const [userSession, setUserSession] = useState<Session | null>(null)
   const [isLoadingUserData, setIsLoadingUserData] = useState(true)
@@ -112,7 +112,7 @@ const AppNavigator = () => {
           component={TransitDetails}
           initialParams={{ conversationId: 0 }}
           options={{
-            headerTitle: 'Transit',
+            headerTitle: 'transit',
             headerBackTitle: ' ', // This will remove the label next to the back button
             animationEnabled: true, // Enable animation for this screen
             headerStyle: {

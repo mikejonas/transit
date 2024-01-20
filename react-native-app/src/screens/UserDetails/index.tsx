@@ -13,7 +13,7 @@ import Box from 'components/Box'
 import Button from 'components/Button'
 import Input from 'components/Input'
 import Text from 'components/Text'
-import { AppNavigationProp } from 'navigators/AppNavigator'
+import { AppNavigationProps } from 'navigators/AppNavigator'
 import { requests } from 'requests'
 
 import CustomBottomSheetModal, { BottomSheetModalMethods } from './BottomSheetModal'
@@ -21,7 +21,7 @@ import CustomBottomSheetModal, { BottomSheetModalMethods } from './BottomSheetMo
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 
 const UserDetails: React.FC = () => {
-  const navigation = useNavigation<AppNavigationProp>() //todo fix any
+  const navigation = useNavigation<AppNavigationProps>() //todo fix any
 
   const [name, setName] = useState<string>('')
   const [birthLocation, setBirthLocation] = useState<string>('')

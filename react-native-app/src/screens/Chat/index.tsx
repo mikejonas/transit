@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { FlatList, SafeAreaView } from 'react-native'
 import { InteractionManager } from 'react-native'
-import { RouteProp, useRoute } from '@react-navigation/native'
+import { useRoute } from '@react-navigation/native'
 import { useTheme } from '@shopify/restyle'
 import Box from 'components/Box'
 import Button from 'components/Button'
 import Input from 'components/Input'
-import { DrawerNavigatorParams } from 'navigators/MainNavigator'
+import { MainRouteProps } from 'navigators/MainNavigator'
 import { requests } from 'requests'
 import { Theme } from 'theme/restyle'
 import ChatMessage from './components/ChatMessage'
@@ -29,7 +29,7 @@ const ChatScreen: React.FC = () => {
   const [hasDataInitialized, setHasDataInitialized] = useState(false)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const flatListRef = useRef<FlatList>(null)
-  const route = useRoute<RouteProp<DrawerNavigatorParams, 'DailyHoroscope'>>()
+  const route = useRoute<MainRouteProps>()
 
   const { conversationId } = route.params
   const startConversation = async () => {
@@ -42,6 +42,8 @@ const ChatScreen: React.FC = () => {
   }
 
   const getMessages = async () => {
+    if (!conversationId) return console.error('conversationId is undefined')
+
     const { data } = await requests.generated.getMessages({ conversationId })
     if (!data || data.length === 0) {
       await startConversation()

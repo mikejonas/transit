@@ -15,6 +15,30 @@ interface ButtonProps {
   isLoading?: boolean
   size?: ButtonSize
   disabled?: boolean
+  varient?: 'primary' | 'secondary'
+}
+
+const variants = {
+  primary: {
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
+  },
+  secondary: {
+    backgroundColor: '#353535',
+    textColor: '#ffffff',
+  },
+  disabled: {
+    backgroundColor: '#555555',
+    textColor: '#bbbbbb',
+  },
+}
+
+const getColor = (disabled: boolean, varient: 'primary' | 'secondary') => {
+  if (disabled) {
+    return variants.disabled
+  }
+
+  return variants[varient]
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -25,8 +49,9 @@ const Button: React.FC<ButtonProps> = ({
   isLoading = false,
   size = 'small',
   disabled = false,
+  varient = 'primary',
 }) => {
-  const backgroundColor = disabled ? '#555555' : '#ffffff'
+  const { backgroundColor, textColor } = getColor(disabled, varient)
 
   const pressedColor = adjustColorBrightness(backgroundColor, disabled ? 0 : -0.2)
   const buttonSize = size === 'small' ? styles.small : styles.medium
@@ -44,7 +69,7 @@ const Button: React.FC<ButtonProps> = ({
         {isLoading ? <ActivityIndicator color="#000000" /> : null}
         {icon && !isLoading && <Icon name={icon} size={12} />}
         {title && !isLoading && (
-          <Text style={styles.text} color={disabled ? 'text' : 'background'} fontWeight={'500'}>
+          <Text style={{ ...styles.text, color: textColor }} fontWeight={'500'}>
             {title}
           </Text>
         )}

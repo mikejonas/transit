@@ -1,21 +1,21 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
-import { createDrawerNavigator, DrawerNavigationProp } from '@react-navigation/drawer'
-import { RouteProp } from '@react-navigation/native'
+import { createDrawerNavigator } from '@react-navigation/drawer'
 import Text from 'components/Text'
 import { StackNavigatorParams } from 'navigators/AppNavigator'
 import { requests } from 'requests'
-import TransitList from 'screens/TransitList'
+import Main from 'screens/Main'
 import { darkTheme } from 'theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { RouteProp } from '@react-navigation/native'
 
-export type DrawerNavigatorParams = {
-  TransitList: { conversationId?: number }
+export type DrawerNavigatorProps = {
+  Main: { conversationId?: number }
 }
-export type MainNavigatorProp = DrawerNavigationProp<StackNavigatorParams, 'MainNavigator'>
 
-const Drawer = createDrawerNavigator<DrawerNavigatorParams>()
+const Drawer = createDrawerNavigator<DrawerNavigatorProps>()
 
 // todo: better handle how to render the label by extracting it its own component
 // todo: better handle font sizes across the app
@@ -26,11 +26,10 @@ const renderLabel = ({ focused, label }: { focused: boolean; label: string }) =>
 )
 const DrawerLabel = (label: string) => (props: any) => renderLabel({ ...props, label })
 
-export type MainNavigatorProps = {
-  route: RouteProp<StackNavigatorParams, 'MainNavigator'>
-}
+export type MainNavigationProps = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
+export type MainRouteProps = RouteProp<DrawerNavigatorProps, 'Main'>
 
-const MainNavigator: React.FC<MainNavigatorProps> = () => {
+const MainNavigator = () => {
   const [conversationId, setConversationId] = React.useState<number | undefined>()
 
   const getOrCreateConversation = async () => {
@@ -57,7 +56,7 @@ const MainNavigator: React.FC<MainNavigatorProps> = () => {
     <>
       <StatusBar barStyle="light-content" />
       <Drawer.Navigator
-        initialRouteName="TransitList"
+        initialRouteName="Main"
         screenOptions={{
           drawerActiveTintColor: darkTheme.colors.title,
           drawerInactiveTintColor: darkTheme.colors.text,
@@ -74,13 +73,15 @@ const MainNavigator: React.FC<MainNavigatorProps> = () => {
         }}
         drawerContent={CustomDrawerContent}>
         <Drawer.Screen
-          name="TransitList"
-          component={TransitList}
+          name="Main"
+          component={Main}
           initialParams={{ conversationId }}
           options={{
-            headerTitle: 'Transit',
+            headerTitle: 'transit',
             headerTitleStyle: {
               color: 'white',
+              fontSize: 26,
+              fontWeight: 'normal',
             },
             drawerLabel: DrawerLabel('Transit'),
           }}

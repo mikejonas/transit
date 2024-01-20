@@ -27,14 +27,12 @@ const palette = {
 const baseTheme = createTheme({
   colors: {
     background: '',
-    cardPrimaryBackground: '',
     cardSecondaryBackground: '',
-    lightBorder: '',
     title: '',
     text: '',
     textSecondary: '', // light graey
     error: '',
-    buttonPurple: '',
+    lightBorder: '',
   },
   spacing: {
     xs: 4,
@@ -50,7 +48,7 @@ const baseTheme = createTheme({
   textVariants: {
     defaults: { fontSize: 15, lineHeight: 22, color: "text" }, // body
     header: {
-      fontSize: 32,
+      fontSize: 28,
       fontWeight: 'bold',
       color: 'title',
     },
@@ -81,7 +79,7 @@ const baseTheme = createTheme({
       borderRadius: 10,
     },
     primary: {
-      backgroundColor: 'cardPrimaryBackground',
+      backgroundColor: 'background',
     },
     secondary: {
       backgroundColor: 'cardSecondaryBackground',
@@ -93,13 +91,11 @@ export const darkTheme = createTheme({
   ...baseTheme,
   colors: {
     background: palette.gray1,
-    cardPrimaryBackground: palette.gray1,
     cardSecondaryBackground: palette.softBlue,
     title: palette.white,
     text: palette.white,
     textSecondary: palette.lightGrey,
     error: palette.red,
-    buttonPurple: palette.vibrantPurple,
     lightBorder: palette.gray6,
   },
 })
@@ -108,13 +104,11 @@ export const lightTheme = createTheme({
   ...darkTheme,
   colors: {
     background: palette.lightGrey,
-    cardPrimaryBackground: palette.white,
     cardSecondaryBackground: palette.softBlueLight,
     title: palette.black,
     text: palette.black,
     textSecondary: palette.black,
     error: palette.red,
-    buttonPurple: palette.vibrantPurple,
     lightBorder: palette.gray6,
   },
 })
