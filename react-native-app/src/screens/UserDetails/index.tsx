@@ -241,6 +241,7 @@ const UserDetails: React.FC = () => {
                 {renderInputs()}
               </ScrollView>
               <Box my="m">{renderSignUpButton()}</Box>
+              <Box />
             </Box>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

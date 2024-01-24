@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StatusBar } from 'react-native'
+import { StatusBar, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack'
 import { useTheme } from '@shopify/restyle'
@@ -73,7 +73,7 @@ const AppNavigator = () => {
   const INITIAL_ROUTE_NAME = 'Loading'
 
   return (
-    <>
+    <View testID="AppNavigator" style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
       <Stack.Navigator
         initialRouteName={INITIAL_ROUTE_NAME}
@@ -128,7 +128,7 @@ const AppNavigator = () => {
           }}
         />
       </Stack.Navigator>
-    </>
+    </View>
   )
 }
 

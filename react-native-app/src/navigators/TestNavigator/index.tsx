@@ -1,15 +1,17 @@
 import * as React from 'react'
 import { useEffect } from 'react'
-import { StatusBar } from 'react-native'
+import { KeyboardAvoidingView, Platform, StatusBar, View } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import Text from 'components/Text'
 import { StackNavigatorParams } from 'navigators/AppNavigator'
 import { requests } from 'requests'
 import Main from 'screens/Main'
+import AskDemo from './screens/AskDemo'
 import { darkTheme } from 'theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { RouteProp } from '@react-navigation/native'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 
 export type DrawerNavigatorProps = {
   Main: { conversationId?: number }
@@ -53,41 +55,44 @@ const MainNavigator = () => {
   if (!conversationId) return null
 
   return (
-    <>
-      <StatusBar barStyle="light-content" />
-      <Drawer.Navigator
-        initialRouteName="Main"
-        screenOptions={{
-          drawerActiveTintColor: darkTheme.colors.title,
-          drawerInactiveTintColor: darkTheme.colors.text,
-          drawerStyle: {
-            backgroundColor: darkTheme.colors.background,
-          },
-          headerStyle: {
-            backgroundColor: darkTheme.colors.background,
-            borderBottomWidth: 0,
-            shadowOpacity: 0, // removes the bottom border
-            elevation: 0, // removes shadow on Android
-          },
-          headerTintColor: darkTheme.colors.title,
-        }}
-        drawerContent={CustomDrawerContent}>
-        <Drawer.Screen
-          name="Main"
-          component={Main}
-          initialParams={{ conversationId }}
-          options={{
-            headerTitle: 'transit',
-            headerTitleStyle: {
-              color: 'white',
-              fontSize: 26,
-              fontWeight: 'normal',
+    <View testID="TestNavigator" style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <StatusBar barStyle="light-content" />
+        <Drawer.Navigator
+          initialRouteName="Main"
+          screenOptions={{
+            drawerActiveTintColor: darkTheme.colors.title,
+            drawerInactiveTintColor: darkTheme.colors.text,
+            drawerStyle: {
+              backgroundColor: darkTheme.colors.background,
             },
-            drawerLabel: DrawerLabel('Transit'),
+            headerStyle: {
+              backgroundColor: darkTheme.colors.background,
+              borderBottomWidth: 0,
+              shadowOpacity: 0, // this removes the bottom border
+              elevation: 0, // this removes shadow on Android
+            },
+            headerTintColor: darkTheme.colors.title,
           }}
-        />
-      </Drawer.Navigator>
-    </>
+          drawerContent={CustomDrawerContent}>
+          <Drawer.Screen
+            name="Main"
+            // component={Main}
+            component={AskDemo}
+            initialParams={{ conversationId }}
+            options={{
+              headerTitle: 'transit',
+              headerTitleStyle: {
+                color: 'white',
+                fontSize: 26,
+                fontWeight: 'normal',
+              },
+              drawerLabel: DrawerLabel('Transit'),
+            }}
+          />
+        </Drawer.Navigator>
+      </BottomSheetModalProvider>
+    </View>
   )
 }
 

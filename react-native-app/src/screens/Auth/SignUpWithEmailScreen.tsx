@@ -6,13 +6,7 @@ import Text from 'components/Text'
 import Textbutton from 'components/TextButton'
 import { requests } from 'requests'
 import Environment from './components/Environment'
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
-  TouchableWithoutFeedback,
-} from 'react-native'
+import { KeyboardAvoidingView, Platform, TextInput } from 'react-native'
 
 const Auth = () => {
   const [email, setEmail] = useState('')
@@ -69,6 +63,7 @@ const Auth = () => {
             placeholder="Email"
             ref={emailInputRef}
             value={email}
+            autoCorrect={false}
             onChangeText={handleChangeEmail}
           />
         </Box>
