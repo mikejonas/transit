@@ -6,7 +6,7 @@ import { useTheme } from '@shopify/restyle'
 import Box from 'components/Box'
 import Button from 'components/Button'
 import Input from 'components/Input'
-import { MainRouteProps } from 'navigators/MainNavigator'
+import { MainAppDrawerNavigatoinRouteProps } from 'navigators/MainAppDrawerNavigator'
 import { requests } from 'requests'
 import { Theme } from 'theme/restyle'
 import ChatMessage from './components/ChatMessage'
@@ -29,9 +29,10 @@ const ChatScreen: React.FC = () => {
   const [hasDataInitialized, setHasDataInitialized] = useState(false)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const flatListRef = useRef<FlatList>(null)
-  const route = useRoute<MainRouteProps>()
+  const route = useRoute<MainAppDrawerNavigatoinRouteProps>()
 
-  const { conversationId } = route.params
+  // const { conversationId } = route.params
+  const conversationId = 2 //todo: remove this line
   const startConversation = async () => {
     if (conversationId) {
       const { data } = await requests.edgeFunctions.startConversation({ conversationId })

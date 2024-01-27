@@ -11,12 +11,16 @@ type IconProps = {
 
 // Feather
 
-export const ArrowUp = ({ size = 24, color = '#000' }: IconProps) => (
+export const ArrowUp = ({ size = 24, color = '#fff' }: IconProps) => (
   <Octicons name="arrow-up" size={size} color={color} />
 )
-export const ThumbsDown = ({ size = 24, color = '#000' }: IconProps) => (
+export const ThumbsDown = ({ size = 24, color = '#fff' }: IconProps) => (
   <Octicons name="thumbsdown" size={size} color={color} />
 )
-export const ThumbsUp = ({ size = 24, color = '#000' }: IconProps) => (
+export const ThumbsUp = ({ size = 24, color = '#fff' }: IconProps) => (
   <Octicons name="thumbsup" size={size} color={color} />
+)
+
+export const XIcon = ({ size = 20, color = '#fff' }: IconProps) => (
+  <Octicons name="x" size={size} color={color} />
 )

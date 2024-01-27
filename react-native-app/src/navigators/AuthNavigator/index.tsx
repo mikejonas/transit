@@ -3,40 +3,22 @@ import { Button, StatusBar, View } from 'react-native'
 import { NavigationContainer, RouteProp } from '@react-navigation/native'
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack'
 import AuthScreen from 'screens/Auth'
+import CreateAccountUserDetails from 'screens/UserDetails'
+
 import SignUpWithEmailScreen from 'screens/Auth/SignUpWithEmailScreen'
 import { useTheme } from '@shopify/restyle'
 import { Theme } from 'theme/restyle'
 
 type AuthStackParamList = {
-  AuthMain: undefined
+  SignInMain: undefined
   SignUpWithEmail: undefined
+  CreateAccountUserDetails: undefined
 }
 
-export type AuthNavigationProps = StackNavigationProp<AuthStackParamList, 'AuthMain'>
-export type AuthRouteProps = RouteProp<AuthStackParamList, 'AuthMain'>
+export type AuthNavigationProps = StackNavigationProp<AuthStackParamList, 'SignInMain'>
+export type AuthRouteProps = RouteProp<AuthStackParamList, 'SignInMain'>
 
 const AuthStack = createStackNavigator<AuthStackParamList>()
-
-// interface AuthScreenProps {
-//   navigation: StackNavigationProp<AuthStackParamList, 'AuthMain'>
-// }
-
-// const AuthScreen: React.FC<AuthScreenProps> = ({ navigation }) => (
-//   <View style={{ marginTop: 100 }}>
-//     <Button title="Sign Up with Email" onPress={() => navigation.navigate('SignUpWithEmail')} />
-//   </View>
-// )
-
-// interface SignUpWithEmailScreenProps {
-//   navigation: StackNavigationProp<AuthStackParamList, 'SignUpWithEmail'>
-// }
-
-// const SignUpWithEmailScreen: React.FC<SignUpWithEmailScreenProps> = ({ navigation }) => (
-//   <View>
-//     <Button title="Back" onPress={() => navigation.goBack()} />
-//     {/* Additional sign-up form elements here */}
-//   </View>
-// )
 
 const AuthNavigator = () => {
   const theme = useTheme<Theme>()
@@ -48,7 +30,7 @@ const AuthNavigator = () => {
           cardStyle: { backgroundColor: theme.colors.background },
         }}>
         <AuthStack.Screen
-          name="AuthMain"
+          name="SignInMain"
           component={AuthScreen}
           options={{
             headerShown: false,

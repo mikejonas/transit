@@ -1,4 +1,4 @@
-import { AuthError } from '@supabase/supabase-js'
+import { AuthChangeEvent, AuthError, Session } from '@supabase/supabase-js'
 import supabaseClient from 'utils/supabaseClient'
 
 interface EmailParams {
@@ -37,7 +37,7 @@ export const authRequests = {
 
     return response
   },
-  onAuthStateChange: (callback: (event: any, session: any) => void) => {
+  onAuthStateChange: (callback: (event: AuthChangeEvent, session: Session | null) => void) => {
     return supabaseClient.auth.onAuthStateChange(callback)
   },
 }

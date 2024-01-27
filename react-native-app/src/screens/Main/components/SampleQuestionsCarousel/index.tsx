@@ -24,7 +24,7 @@ const makeRowsOfQuestions = (questions: string[], rowCount: number) => {
 }
 
 type SampleQuestionsCarouselProps = {
-  onPress?: () => void
+  onPress: (question: string) => void
 }
 
 const SampleQuestionsCarousel = ({ onPress }: SampleQuestionsCarouselProps) => {
@@ -54,7 +54,7 @@ const SampleQuestionsCarousel = ({ onPress }: SampleQuestionsCarouselProps) => {
   const renderQuestion = (question: string) => {
     return (
       <Box m="xs" key={question}>
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={() => onPress(question)}>
           <Box borderRadius={4} style={{ backgroundColor: '#282828' }} py="s" px="s">
             <Text color="textSecondary">{question}</Text>
           </Box>

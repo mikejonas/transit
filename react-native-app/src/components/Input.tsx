@@ -17,7 +17,7 @@ const Input = forwardRef<RNTextInput, InputProps>((props, ref) => {
       ref={ref}
       {...props}
       style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.04)',
+        backgroundColor: '#2a2a2a',
         borderRadius: 16,
         height: 48,
         width: '100%',

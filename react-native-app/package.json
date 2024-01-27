@@ -12,26 +12,24 @@
     "web": "expo start --web",
     "test": "sh setenv.sh dev && jest",
     "test:silent": "sh setenv.sh dev && jest --silent"
-
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.6.0",
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-community/datetimepicker": "7.6.1",
-    "@react-navigation/core": "^6.4.10",
     "@react-navigation/drawer": "^6.6.6",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
     "@shopify/restyle": "^2.4.2",
     "@supabase/supabase-js": "^2.39.3",
-    "expo": "^50.0.2",
+    "expo": "^50.0.3",
     "expo-status-bar": "~1.11.1",
     "jest": "^29.3.1",
     "jest-expo": "~50.0.1",
     "react": "18.2.0",
     "react-native": "0.73.2",
     "react-native-gesture-handler": "~2.14.0",
-    "react-native-reanimated": "~3.6.0",
+    "react-native-reanimated": "^3.6.2",
     "react-native-svg": "14.1.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vector-icons": "^10.0.3"

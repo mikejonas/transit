@@ -21,6 +21,17 @@ npm run start:local # start one or multiple instances locally
 npm run start:prod # start one or multiple instances on prod
 ```
 
+#### If you're getting issues running app on expo go on native devices
+Use the [--tunnel](https://docs.expo.dev/more/expo-cli/#tunneling) flag. (Tunnel does not work with --offline flag)
+```bash
+# make sure you have ngrog installed
+npm i -g @expo/ngrok
+# use tunnel flag when starting app
+npm run start:dev -- --tunnel
+```
+npx expo start --tunnel
+
+
 #### Start supabase locally in /supabase
 
 ```bash

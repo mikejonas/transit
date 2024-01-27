@@ -6,8 +6,14 @@ import TransitGrid from './components/TransitGrid'
  * This is a rough hacked together version of chat ui. It would need to be cleaned up to build upon
  */
 
-const TransitDetails: React.FC = () => {
-  return <TransitGrid />
+const ChatScreen: React.FC = () => {
+  return (
+    <Box mt="m">
+      <Box m="m">
+        <TransitGrid />
+      </Box>
+    </Box>
+  )
 }
 
-export default TransitDetails
+export default ChatScreen

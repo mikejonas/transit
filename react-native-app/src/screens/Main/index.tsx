@@ -1,38 +1,89 @@
-import React, { useState } from 'react'
-import { Image, SafeAreaView } from 'react-native'
+import React, { useRef, useState, useEffect } from 'react'
+import { Animated, PanResponder, Dimensions } from 'react-native'
+import { Image, SafeAreaView, TextInput } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import Box from 'components/Box'
-import Button from 'components/Button'
-import { ArrowUp } from 'components/Icons'
-import Input from 'components/Input'
-import { MainNavigationProps } from 'navigators/MainNavigator'
 import SampleQuestionsCarousel from './components/SampleQuestionsCarousel'
 import HoroscopeCarousel, { sampleData } from './components/HoroscopeCarousel'
 import Text from 'components/Text'
+import MessageInput from 'components/MessageInput'
+import { HomeNavigationProps } from 'navigators/HomeNavigator'
+import { useHeaderHeight } from '@react-navigation/elements'
+import FakeNewChatSheet from './components/FakeNewChatSheet'
+const screenHeight = Dimensions.get('window').height - 100
 
-const ChatScreen: React.FC = () => {
-  const [inputText, setInputText] = useState('')
-  const navigation = useNavigation<MainNavigationProps>()
+const MainScreen: React.FC = () => {
+  const headerHeight = useHeaderHeight()
+  const inputRef = useRef<TextInput>(null)
+  const navigation = useNavigation<HomeNavigationProps>()
+  const panY = useRef(new Animated.Value(screenHeight)).current
 
-  const postMessage = async (newMessage: string) => {}
+  const resetPositionAnim = Animated.timing(panY, {
+    toValue: 0,
+    duration: 300,
+    useNativeDriver: true,
+  })
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return Math.abs(gestureState.dy) > 100
+      },
+      onPanResponderMove: (_, gestureState) => {
+        Animated.timing(panY, {
+          toValue: Math.max(gestureState.dy / 1.5, -headerHeight),
+          duration: 0,
+          useNativeDriver: true,
+        }).start()
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        // Your condition and navigation logic
+        if (gestureState.dy < -100 || (gestureState.dy < -50 && gestureState.vy < -0.75)) {
+          navigation.navigate('ConversationThread', {})
+        }
+        resetPositionAnim.start()
+      },
+    }),
+  ).current
+
+  const renderDragUpView = () => (
+    <Animated.View
+      style={[
+        {
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: screenHeight,
+          height: screenHeight,
+          backgroundColor: '#222',
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 12,
+        },
+        { transform: [{ translateY: panY }] },
+      ]}
+      {...panResponder.panHandlers}>
+      <FakeNewChatSheet />
+    </Animated.View>
+  )
 
   const renderMessageInput = () => {
     return (
-      <Box flexDirection="row" alignItems="center" marginHorizontal="m" marginTop="s">
-        <Box flex={1}>
-          <Input value={inputText} onChangeText={setInputText} placeholder="ask anything..." />
-        </Box>
-        <Box marginLeft="s">
-          <Button onPress={() => postMessage(inputText)}>
-            <ArrowUp color="#333" size={20} />
-          </Button>
-        </Box>
-      </Box>
+      <MessageInput
+        ref={inputRef}
+        editable={false}
+        placeholder="Ask anything..."
+        onPressIn={() => {
+          navigation.navigate('ConversationThread', {})
+        }}
+        onSubmit={question => {
+          navigation.navigate('ConversationThread', { conversationId: 3, title: question })
+        }}
+      />
     )
   }
 
   return (
-    <Box flex={1} backgroundColor="background">
+    <Box flex={1} backgroundColor="background" {...panResponder.panHandlers}>
       <SafeAreaView style={{ flex: 1 }}>
         <Box flex={1} justifyContent="space-between">
           <Box mt="xl">
@@ -51,16 +102,17 @@ const ChatScreen: React.FC = () => {
               </Text>
             </Box>
             <SampleQuestionsCarousel
-              onPress={() => {
-                navigation.navigate('TransitHoroscope', { conversationId: 1 })
+              onPress={question => {
+                navigation.navigate('ConversationThread', { conversationId: 3, title: question })
               }}
             />
           </Box>
           {renderMessageInput()}
         </Box>
       </SafeAreaView>
+      {renderDragUpView()}
     </Box>
   )
 }
 
-export default ChatScreen
+export default MainScreen

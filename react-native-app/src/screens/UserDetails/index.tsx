@@ -13,15 +13,16 @@ import Box from 'components/Box'
 import Button from 'components/Button'
 import Input from 'components/Input'
 import Text from 'components/Text'
-import { AppNavigationProps } from 'navigators/AppNavigator'
+import { RootNavigationProps } from 'navigators/RootNavigator'
 import { requests } from 'requests'
 
 import CustomBottomSheetModal, { BottomSheetModalMethods } from './BottomSheetModal'
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
+import TextButton from 'components/TextButton'
 
 const UserDetails: React.FC = () => {
-  const navigation = useNavigation<AppNavigationProps>() //todo fix any
+  const navigation = useNavigation<RootNavigationProps>()
 
   const [name, setName] = useState<string>('')
   const [birthLocation, setBirthLocation] = useState<string>('')
@@ -189,6 +190,12 @@ const UserDetails: React.FC = () => {
     )
   }
 
+  const renderLogOutButton = () => {
+    return (
+      <TextButton onPress={() => requests.auth.signOut()}>(dev: logout if you're stuck)</TextButton>
+    )
+  }
+
   const renderSignUpButton = () => {
     const handleSubmit = async () => {
       const { data, error } = await requests.edgeFunctions.addUserDetails({
@@ -197,7 +204,7 @@ const UserDetails: React.FC = () => {
       })
       console.log({ data, error })
       if (data) {
-        navigation.navigate('MainNavigator')
+        navigation.navigate('MainAppDrawerNavigator')
       }
     }
 
@@ -240,6 +247,7 @@ const UserDetails: React.FC = () => {
                 </Box>
                 {renderInputs()}
               </ScrollView>
+              {renderLogOutButton()}
               <Box my="m">{renderSignUpButton()}</Box>
               <Box />
             </Box>

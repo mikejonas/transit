@@ -3,19 +3,20 @@ import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import Text from 'components/Text'
-import { StackNavigatorParams } from 'navigators/AppNavigator'
+import { StackNavigatorParams } from 'navigators/RootNavigator'
 import { requests } from 'requests'
 import Main from 'screens/Main'
 import { darkTheme } from 'theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
-import { StackNavigationProp } from '@react-navigation/stack'
+import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { RouteProp } from '@react-navigation/native'
+import HomeNavigator from 'navigators/HomeNavigator'
 
-export type DrawerNavigatorProps = {
-  Main: { conversationId?: number }
+export type MainAppDrawerNavigatorProps = {
+  HomeNavigator: undefined
 }
 
-const Drawer = createDrawerNavigator<DrawerNavigatorProps>()
+const Drawer = createDrawerNavigator<MainAppDrawerNavigatorProps>()
 
 // todo: better handle how to render the label by extracting it its own component
 // todo: better handle font sizes across the app
@@ -26,12 +27,19 @@ const renderLabel = ({ focused, label }: { focused: boolean; label: string }) =>
 )
 const DrawerLabel = (label: string) => (props: any) => renderLabel({ ...props, label })
 
-export type MainNavigationProps = StackNavigationProp<StackNavigatorParams, 'MainNavigator'>
-export type MainRouteProps = RouteProp<DrawerNavigatorProps, 'Main'>
+export type MainAppDrawerNavigationProps = DrawerNavigationProp<
+  MainAppDrawerNavigatorProps,
+  'HomeNavigator'
+>
+export type MainAppDrawerNavigatoinRouteProps = RouteProp<
+  MainAppDrawerNavigatorProps,
+  'HomeNavigator'
+>
 
-const MainNavigator = () => {
+const MainAppDrawerNavigator = () => {
   const [conversationId, setConversationId] = React.useState<number | undefined>()
 
+  //@todo we'll neeed this later
   const getOrCreateConversation = async () => {
     const { data, error } = await requests.generated.getConversation()
     if (data) {
@@ -46,23 +54,18 @@ const MainNavigator = () => {
     if (error) console.log({ error })
   }
 
-  useEffect(() => {
-    getOrCreateConversation()
-  }, [])
-
-  if (!conversationId) return null
-
   return (
     <>
       <StatusBar barStyle="light-content" />
       <Drawer.Navigator
-        initialRouteName="Main"
+        initialRouteName="HomeNavigator"
         screenOptions={{
           drawerActiveTintColor: darkTheme.colors.title,
           drawerInactiveTintColor: darkTheme.colors.text,
           drawerStyle: {
             backgroundColor: darkTheme.colors.background,
           },
+          swipeEdgeWidth: 200,
           headerStyle: {
             backgroundColor: darkTheme.colors.background,
             borderBottomWidth: 0,
@@ -73,10 +76,10 @@ const MainNavigator = () => {
         }}
         drawerContent={CustomDrawerContent}>
         <Drawer.Screen
-          name="Main"
-          component={Main}
-          initialParams={{ conversationId }}
+          name="HomeNavigator"
+          component={HomeNavigator}
           options={{
+            headerShown: false,
             headerTitle: 'transit',
             headerTitleStyle: {
               color: 'white',
@@ -91,4 +94,4 @@ const MainNavigator = () => {
   )
 }
 
-export default MainNavigator
+export default MainAppDrawerNavigator

@@ -19,7 +19,7 @@ const HoroscopeCard: React.FC<HoroscopeCardProps> = ({ text, title }) => {
           {title}
         </Text>
       </Box>
-      <Text numberOfLines={3} color="textSecondary">
+      <Text numberOfLines={4} color="textSecondary">
         {text}
       </Text>
     </Box>
