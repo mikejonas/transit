@@ -11,12 +11,17 @@ import { useTheme } from '@shopify/restyle'
 import DrawerToggleButton from './DrawerToggleButton'
 export type StackNavigatorProps = {
   MainScreen: undefined
-  ConversationThread: { conversationId?: number; title?: string }
+  ConversationThread: { conversationId?: number; newThreadFirstMessage?: string }
 }
 
 const Stack = createStackNavigator<StackNavigatorProps>()
 
 export type HomeNavigationProps = StackNavigationProp<StackNavigatorProps, 'MainScreen'>
+export type ConversationThreadNavigationProps = StackNavigationProp<
+  StackNavigatorProps,
+  'ConversationThread'
+>
+
 export type ConversationThreadRouteProps = RouteProp<StackNavigatorProps, 'ConversationThread'>
 
 const HomeNavigator = () => {
@@ -60,7 +65,7 @@ const HomeNavigator = () => {
           <Stack.Screen
             name="ConversationThread"
             component={ConversationScreen}
-            initialParams={{ conversationId: undefined }}
+            initialParams={{ conversationId: undefined, newThreadFirstMessage: undefined }}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

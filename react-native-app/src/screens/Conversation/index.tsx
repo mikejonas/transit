@@ -51,7 +51,9 @@ const App = () => {
                 editable={true}
                 onChangeText={text => setInputText(text)}
                 onSubmit={question => {
-                  navigation.navigate('ConversationThread', { conversationId: 3, title: question })
+                  navigation.navigate('ConversationThread', {
+                    newThreadFirstMessage: question,
+                  })
                 }}
                 placeholder="Ask anything..."
               />
@@ -72,16 +74,13 @@ const App = () => {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 68 : 0}>
           <SafeAreaView style={{ flex: 1 }}>
             <TransitDetails />
-            <Box pt="xs" style={{ backgroundColor: '#181818' }}>
-              <MessageInput ref={inputRef} editable={true} placeholder="Ask follow up..." />
-            </Box>
           </SafeAreaView>
         </KeyboardAvoidingView>
       </>
     )
   }
 
-  const { conversationId } = route.params
+  const { conversationId, newThreadFirstMessage } = route.params
 
   return (
     <SafeAreaProvider>
@@ -99,7 +98,9 @@ const App = () => {
             }
           }}
           handleComponent={CustomHandle}>
-          {(conversationId || 0) > 2 ? renderConversationThread() : renderAskNewQuestion()}
+          {conversationId || newThreadFirstMessage
+            ? renderConversationThread()
+            : renderAskNewQuestion()}
         </BottomSheet>
       </View>
     </SafeAreaProvider>

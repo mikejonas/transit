@@ -9,12 +9,13 @@ interface MessageInputProps {
   editable: boolean
   placeholder: string
   onPressIn?: () => void
+  onFocus?: () => void
   onSubmit?: (question: string) => void
   onChangeText?: (text: string) => void
 }
 
 const MessageInput = forwardRef<TextInput, MessageInputProps>(
-  ({ editable, onChangeText, placeholder, onPressIn, onSubmit }, ref) => {
+  ({ editable, onChangeText, onFocus, placeholder, onPressIn, onSubmit }, ref) => {
     const [inputText, setInputText] = useState('')
 
     return (
@@ -37,6 +38,7 @@ const MessageInput = forwardRef<TextInput, MessageInputProps>(
                 setInputText('')
               }
             }}
+            onFocus={onFocus}
           />
         </Box>
       </Box>

@@ -8,7 +8,6 @@ import MainAppDrawerNavigator from 'navigators/MainAppDrawerNavigator'
 import InitialLoadingScreen from 'screens/InitialLoading'
 import { requests } from 'requests'
 import AuthNavigator from 'navigators/AuthNavigator'
-import TransitDetails from 'screens/TransitDetails'
 import UserDetails from 'screens/UserDetails'
 import { Theme } from 'theme/restyle'
 

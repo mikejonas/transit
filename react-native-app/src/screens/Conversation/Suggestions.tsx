@@ -25,8 +25,7 @@ const App = () => {
         <Pressable
           onPress={() => {
             navigation.navigate('ConversationThread', {
-              conversationId: 3,
-              title: item,
+              newThreadFirstMessage: item,
             })
             Keyboard.dismiss()
           }}>

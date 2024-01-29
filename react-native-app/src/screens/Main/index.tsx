@@ -76,7 +76,7 @@ const MainScreen: React.FC = () => {
           navigation.navigate('ConversationThread', {})
         }}
         onSubmit={question => {
-          navigation.navigate('ConversationThread', { conversationId: 3, title: question })
+          navigation.navigate('ConversationThread', { newThreadFirstMessage: question })
         }}
       />
     )
@@ -103,7 +103,7 @@ const MainScreen: React.FC = () => {
             </Box>
             <SampleQuestionsCarousel
               onPress={question => {
-                navigation.navigate('ConversationThread', { conversationId: 3, title: question })
+                navigation.navigate('ConversationThread', { newThreadFirstMessage: question })
               }}
             />
           </Box>

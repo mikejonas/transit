@@ -1,11 +1,6 @@
-import * as React from 'react'
-import { useEffect } from 'react'
 import { StatusBar } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import Text from 'components/Text'
-import { StackNavigatorParams } from 'navigators/RootNavigator'
-import { requests } from 'requests'
-import Main from 'screens/Main'
 import { darkTheme } from 'theme/restyle'
 import CustomDrawerContent from './CustomDrawerContent'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
@@ -37,23 +32,6 @@ export type MainAppDrawerNavigatoinRouteProps = RouteProp<
 >
 
 const MainAppDrawerNavigator = () => {
-  const [conversationId, setConversationId] = React.useState<number | undefined>()
-
-  //@todo we'll neeed this later
-  const getOrCreateConversation = async () => {
-    const { data, error } = await requests.generated.getConversation()
-    if (data) {
-      // get conversation
-      setConversationId(data.conversation_id)
-    } else {
-      // create conversation
-      const { data: newData, error: newError } = await requests.edgeFunctions.newConversation()
-      if (newData) setConversationId(newData.conversation_id)
-      if (newError) console.log({ newError })
-    }
-    if (error) console.log({ error })
-  }
-
   return (
     <>
       <StatusBar barStyle="light-content" />

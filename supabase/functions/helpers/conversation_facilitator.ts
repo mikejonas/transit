@@ -3,6 +3,7 @@ import { UserDetailsDatabase } from "./database_helpers/user_details_database.ts
 import {
   Message,
   MessagesDatabase,
+  RoleType,
 } from "./database_helpers/messages_database.ts";
 import { OpenAI } from "OpenAi";
 import { ZodiacSign } from "./astrology.ts";
@@ -190,14 +191,18 @@ class ConversationFacilitator {
 
   // Based on the passed in messages get Open AI's response
   private async TalkToOpenAi(messages: Message[]): Promise<string> {
-    const open_ai_messages = [];
+    const open_ai_messages: { role: RoleType, content: string }[] = [];
     for (let i = 0; i < messages.length; i++) {
-      console.log(messages[i]);
       open_ai_messages.push({
         role: messages[i].role,
         content: messages[i].content,
       });
     }
+
+    // Reducing tokens to keep costs down during development! 
+    // @TODO: Optimise prompt
+    const lastFiveMessages = open_ai_messages.slice(-5)
+    console.log({lastFiveMessages})
     const completion = await this.open_ai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: open_ai_messages,

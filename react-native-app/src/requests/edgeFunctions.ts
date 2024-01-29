@@ -65,6 +65,16 @@ export const edgeFunctionRequests = {
     }
     return response
   },
+  startNewConversation: async ({newMessage}: {newMessage: string}) => {
+    const response = await supabaseClient.functions.invoke('new-conversation-with-message', {
+      body: JSON.stringify({ new_message: newMessage }),
+    })
+
+    if (response.error) {
+      await handleEdgeFunctionRequestError('Error starting new conversation:', response.error)
+    }
+    return response
+  },
   startConversation: async ({ conversationId }: { conversationId: number }) => {
     const response = await supabaseClient.functions.invoke('start-conversation', {
       body: JSON.stringify({ conversation_id: conversationId }),

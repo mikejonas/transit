@@ -52,7 +52,7 @@ export const generatedRequests = {
 
     return response
   },
-  getConversation: async () => {
+  getConversations: async () => {
     // filtered by user_id
     const response = await supabaseClient
       .from(TABLES.conversation)
@@ -61,8 +61,20 @@ export const generatedRequests = {
         conversation_id
       `,
       )
+    if (response.error) handleSupabaseRequestError('Error getting conversation:', response.error)
+
+    return response
+  },
+  getConversation: async () => {
+    // filtered by user_id
+    const response = await supabaseClient
+      .from(TABLES.conversation)
+      .select(
+        `
+        conversation_id,
+      `,
+      )
       .maybeSingle()
-    console.log(response)
     if (response.error) handleSupabaseRequestError('Error getting conversation:', response.error)
 
     return response

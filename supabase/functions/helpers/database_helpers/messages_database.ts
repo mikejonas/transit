@@ -1,6 +1,6 @@
 import { SupabaseClient } from "SupabaseClient";
 
-type RoleType = "user" | "system" | "assistant";
+export type RoleType = "user" | "system" | "assistant";
 
 interface Message {
   conversation_id: number;
