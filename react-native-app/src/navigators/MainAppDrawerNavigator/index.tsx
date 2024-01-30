@@ -64,7 +64,7 @@ const MainAppDrawerNavigator = () => {
               fontSize: 26,
               fontWeight: 'normal',
             },
-            drawerLabel: DrawerLabel('Transit'),
+            drawerLabel: DrawerLabel('Conversations'),
           }}
         />
       </Drawer.Navigator>

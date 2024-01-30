@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react'
 import { SafeAreaView, View } from 'react-native'
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerContentComponentProps,
-} from '@react-navigation/drawer'
+import { DrawerContentScrollView, DrawerContentComponentProps } from '@react-navigation/drawer'
 import TextButton from 'components/TextButton'
 import { requests } from 'requests'
 import { useDrawerStatus } from '@react-navigation/drawer'
 import Box from 'components/Box'
 import { useNavigation } from '@react-navigation/native'
 import { HomeNavigationProps } from 'navigators/HomeNavigator'
+import ConversationButton from './ConversationButton'
 type Conversation = { conversation_id: number }
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
@@ -37,25 +34,29 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     await requests.auth.signOut()
   }
 
-  const renderConversations = () => {
-    return conversations.map(conversation => (
-      <Box key={conversation.conversation_id}>
-        <TextButton
+  const renderConversation = (conversation: Conversation) => {
+    return (
+      <Box key={conversation.conversation_id} marginHorizontal="m" mb="s">
+        <ConversationButton
           onPress={() =>
             navigation.navigate('ConversationThread', {
               conversationId: conversation.conversation_id,
             })
           }>
           Conversation {conversation.conversation_id}
-        </TextButton>
+        </ConversationButton>
       </Box>
-    ))
+    )
+  }
+
+  const renderConversations = () => {
+    return conversations.map(conversation => renderConversation(conversation))
   }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
+        {/* <DrawerItemList {...props} /> */}
         {renderConversations()}
       </DrawerContentScrollView>
       <View>
