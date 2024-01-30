@@ -2,7 +2,7 @@ import React, { useRef, useMemo, useEffect, useState } from 'react'
 import { StyleSheet, View, KeyboardAvoidingView, Platform, TextInput } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import CustomHeader from './CustomHeader' // Import your custom header
-import TransitDetails from 'screens/TransitDetails'
+import ConversationThread from 'screens/ConversationThread'
 
 import Suggestions from './Suggestions'
 
@@ -73,7 +73,7 @@ const App = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 68 : 0}>
           <SafeAreaView style={{ flex: 1 }}>
-            <TransitDetails />
+            <ConversationThread />
           </SafeAreaView>
         </KeyboardAvoidingView>
       </>

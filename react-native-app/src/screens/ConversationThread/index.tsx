@@ -7,7 +7,6 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import {
   ConversationThreadNavigationProps,
   ConversationThreadRouteProps,
-  HomeNavigationProps,
 } from 'navigators/HomeNavigator'
 import MessageInput from 'components/MessageInput'
 import { Keyboard, ScrollView, TextInput } from 'react-native'
@@ -57,7 +56,7 @@ const useAddMessageInConversation = () => {
   })
 }
 
-const TransitDetails: React.FC = () => {
+const ConversationThread: React.FC = () => {
   const scrollViewRef = useRef<ScrollView>(null)
   const inputRef = useRef<TextInput>(null)
   const route = useRoute<ConversationThreadRouteProps>()
@@ -65,6 +64,7 @@ const TransitDetails: React.FC = () => {
   const query = useGetConversationMessages(conversationId)
   const addMessageMutation = useAddMessageInConversation()
   const newConversationMutation = useStartNewConversation()
+  const isResponsePending = addMessageMutation.isPending || newConversationMutation.isPending
 
   useEffect(() => {
     if (newThreadFirstMessage && !conversationId) {
@@ -157,6 +157,9 @@ const TransitDetails: React.FC = () => {
             addMessageMutation.variables?.newMessage || newThreadFirstMessage || '',
             'pending',
           )}
+        {isResponsePending && (
+          <AssistantResponse assistantMessage={''} isResponsePending={isResponsePending} />
+        )}
       </BottomSheetScrollView>
       <Box pt="xs" style={{ backgroundColor: '#181818' }}>
         {renderMessageInput()}
@@ -165,4 +168,4 @@ const TransitDetails: React.FC = () => {
   )
 }
 
-export default TransitDetails
+export default ConversationThread

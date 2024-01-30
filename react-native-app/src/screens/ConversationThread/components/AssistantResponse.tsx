@@ -6,13 +6,16 @@ import OrbitTest from 'components/OrbitTest' // Make sure the import path is cor
 import Text from 'components/Text'
 import { useRoute } from '@react-navigation/native'
 import { ConversationThreadRouteProps } from 'navigators/HomeNavigator'
-
+import BlinkingCursor from './BlinkingCursor'
 interface AssistantResponseProps {
   assistantMessage: string
-  transit?: string
+  isResponsePending?: boolean
 }
 
-const AssistantResponse: React.FC<AssistantResponseProps> = ({ assistantMessage, transit }) => {
+const AssistantResponse: React.FC<AssistantResponseProps> = ({
+  assistantMessage,
+  isResponsePending,
+}) => {
   const route = useRoute<ConversationThreadRouteProps>()
 
   const scale = useState(new Animated.Value(2))[0]
@@ -22,7 +25,8 @@ const AssistantResponse: React.FC<AssistantResponseProps> = ({ assistantMessage,
   const [isAnimationActive, setIsAnimationActive] = useState(false)
   const opacity = useState(new Animated.Value(0))[0]
 
-  const showInitialAnimation = !route.params.conversationId
+  // TODO remove !isResponsePending to work on animation again
+  const showInitialAnimation = !route.params.conversationId && !isResponsePending
 
   const maybeAnimate = (ms: number) => {
     return showInitialAnimation ? ms : 0
@@ -136,7 +140,13 @@ const AssistantResponse: React.FC<AssistantResponseProps> = ({ assistantMessage,
         <Box mb="m">
           <Text variant="sectionTitle">Response</Text>
         </Box>
-        <Text lineHeight={26}>{assistantMessage}</Text>
+        {isResponsePending ? (
+          <Box mb="m">
+            <BlinkingCursor />
+          </Box>
+        ) : (
+          <Text lineHeight={26}>{assistantMessage}</Text>
+        )}
       </Animated.View>
     </Box>
   )
