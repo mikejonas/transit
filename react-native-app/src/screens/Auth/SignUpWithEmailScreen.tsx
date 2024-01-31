@@ -7,52 +7,59 @@ import Textbutton from 'components/TextButton'
 import { requests } from 'requests'
 import Environment from './components/Environment'
 import { KeyboardAvoidingView, Platform, TextInput } from 'react-native'
+import { useMutation } from '@tanstack/react-query'
+
+const useSignUpWithEmail = () =>
+  useMutation({
+    mutationFn: requests.auth.signUp,
+  })
+
+const useSignInWithEmail = () =>
+  useMutation({
+    mutationFn: requests.auth.signInWithPassword,
+  })
 
 const Auth = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [authError, setAuthError] = useState<string>()
   const emailInputRef = useRef<TextInput>(null)
 
+  const signUpMutation = useSignUpWithEmail()
+  const signInMutation = useSignInWithEmail()
+
+  const isAuthenticating = signUpMutation.isPending || signInMutation.isPending
+
   useEffect(() => {
-    if (emailInputRef.current) {
-      emailInputRef.current.focus()
-    }
+    if (emailInputRef.current) emailInputRef.current.focus()
   }, [])
 
-  const handleSubmit = async () => {
-    setLoading(true)
+  const handleSubmit = () => {
+    const credentials = { email, password }
     if (isSignUp) {
-      const { error } = await requests.auth.signUp({
-        email,
-        password,
+      signUpMutation.mutate(credentials, {
+        onError: error => {
+          setAuthError(error.message)
+        },
       })
-      if (error) {
-        setAuthError(error.message)
-        console.log(error)
-      }
     } else {
-      const { error } = await requests.auth.signInWithPassword({
-        email,
-        password,
+      signInMutation.mutate(credentials, {
+        onError: error => {
+          setAuthError(error.message)
+        },
       })
-      if (error) {
-        setAuthError(error.message)
-        console.log(error)
-      }
     }
-    setLoading(false)
   }
 
-  const handleChangePassword = async (value: string) => {
+  const handleChangePassword = (value: string) => {
     setPassword(value)
-    authError && setAuthError(undefined)
+    setAuthError(undefined)
   }
-  const handleChangeEmail = async (value: string) => {
+
+  const handleChangeEmail = (value: string) => {
     setEmail(value)
-    authError && setAuthError(undefined)
+    setAuthError(undefined)
   }
 
   const renderInputs = () => {
@@ -86,7 +93,7 @@ const Auth = () => {
     )
   }
 
-  const renderButton = () => {
+  const renderSubmitButton = () => {
     const isDisabled = !email || !password
     return (
       <Button
@@ -94,7 +101,7 @@ const Auth = () => {
         disabled={isDisabled}
         title={isSignUp ? 'Sign up' : 'Sign in'}
         onPress={() => (isDisabled ? null : handleSubmit())}
-        isLoading={loading}
+        isLoading={isAuthenticating}
       />
     )
   }
@@ -117,7 +124,7 @@ const Auth = () => {
             {renderInputs()}
           </Box>
           <Box mb="m">
-            <Box mb="s">{renderButton()}</Box>
+            <Box mb="s">{renderSubmitButton()}</Box>
             <Box>
               <Textbutton onPress={() => setIsSignUp(!isSignUp)}>
                 {isSignUp ? 'Switch to sign in' : 'Switch to sign up'}

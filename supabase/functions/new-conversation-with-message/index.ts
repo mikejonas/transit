@@ -22,11 +22,12 @@ serve(async (req) => {
       user.id,
     );
     
-    const message = await conversation_facilitator.AddMessageToConversation(
+    await conversation_facilitator.AddMessageToConversation(
       user.id,
       conversation.conversation_id,
       body.new_message,
     );
+
     return SuccessfulResponse(JSON.stringify(conversation));
   } catch (error) {
     return ErrorResponse(error.message);

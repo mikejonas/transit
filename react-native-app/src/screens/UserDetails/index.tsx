@@ -20,9 +20,16 @@ import CustomBottomSheetModal, { BottomSheetModalMethods } from './BottomSheetMo
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import TextButton from 'components/TextButton'
+import { useMutation } from '@tanstack/react-query'
+
+const useUpdateUserDetails = () =>
+  useMutation({
+    mutationFn: requests.edgeFunctions.addUserDetails,
+  })
 
 const UserDetails: React.FC = () => {
   const navigation = useNavigation<RootNavigationProps>()
+  const updateUserDetailsMutation = useUpdateUserDetails()
 
   const [name, setName] = useState<string>('')
   const [birthLocation, setBirthLocation] = useState<string>('')
@@ -197,15 +204,11 @@ const UserDetails: React.FC = () => {
   }
 
   const renderSignUpButton = () => {
-    const handleSubmit = async () => {
-      const { data, error } = await requests.edgeFunctions.addUserDetails({
-        name,
-        birthDate: selectedDate,
-      })
-      console.log({ data, error })
-      if (data) {
-        navigation.navigate('MainAppDrawerNavigator')
-      }
+    const handleSubmit = () => {
+      updateUserDetailsMutation.mutate(
+        { name, birthDate: selectedDate },
+        { onSuccess: () => navigation.navigate('MainAppDrawerNavigator') },
+      )
     }
 
     const isDisabled = !name || !dateSet || !timeSet
@@ -215,6 +218,7 @@ const UserDetails: React.FC = () => {
           size="medium"
           title={'Sign up'}
           disabled={isDisabled}
+          isLoading={updateUserDetailsMutation.isPending}
           onPress={() => {
             if (isDisabled) {
               Keyboard.dismiss()

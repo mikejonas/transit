@@ -6,7 +6,7 @@ interface EmailParams {
   password: string
 }
 
-const handleSupabaseAuthError = async (message: string, error: AuthError) => {
+const handleSupabaseAuthError = (message: string, error: AuthError) => {
   const constructedError = new Error(`${message}: ${error.message}`)
   console.error(constructedError)
   throw constructedError

@@ -86,9 +86,7 @@ const MainScreen: React.FC = () => {
     <Box flex={1} backgroundColor="background" {...panResponder.panHandlers}>
       <SafeAreaView style={{ flex: 1 }}>
         <Box flex={1} justifyContent="space-between">
-          <Box mt="xl">
-            <HoroscopeCarousel data={sampleData} />
-          </Box>
+          <Box>{/* (<-- also add mt="xl")<HoroscopeCarousel data={sampleData} /> */}</Box>
           <Box>
             <Box mb="xl">
               <Box mb="m" alignItems="center">

@@ -37,7 +37,6 @@ const CustomBottomSheetModal = forwardRef<BottomSheetModalMethods, CustomBottomS
     // Extend the ref methods
     useImperativeHandle(ref, () => ({
       present: () => {
-        console.log('present method called')
         bottomSheetRef.current?.present()
       },
       dismiss: () => bottomSheetRef.current?.dismiss(),
