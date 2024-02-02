@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   KeyboardAvoidingView,
   ScrollView,
@@ -20,28 +20,69 @@ import CustomBottomSheetModal, { BottomSheetModalMethods } from './BottomSheetMo
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import TextButton from 'components/TextButton'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { TextInput } from 'react-native-gesture-handler'
+import { AutocompletePrediction } from '../../requests/utils'
+
+const useGetLocationAutocomplete = (searchQuery: string) => {
+  const [autocompleteResults, setAutocompleteResults] = useState<AutocompletePrediction[]>([])
+
+  const { data, isFetching, isError, error } = useQuery({
+    queryKey: ['locationAutocomplete', searchQuery],
+    queryFn: () => requests.edgeFunctions.locationAutocomplete({ searchQuery }),
+    enabled: searchQuery.length > 2,
+    staleTime: Infinity,
+  })
+
+  useEffect(() => {
+    if (!isFetching && data) {
+      setAutocompleteResults(data.data.predictions)
+    }
+  }, [data, isFetching])
+
+  useEffect(() => {
+    if (searchQuery.length < 3) {
+      setAutocompleteResults([])
+    }
+  }, [searchQuery])
+
+  return {
+    autocompleteResults, // Use this for rendering in your component
+    isFetching,
+    isError,
+    error,
+  }
+}
 
 const useUpdateUserDetails = () =>
-  useMutation({
-    mutationFn: requests.edgeFunctions.addUserDetails,
-  })
+  useMutation({ mutationFn: requests.edgeFunctions.addUserDetails })
 
 const UserDetails: React.FC = () => {
   const navigation = useNavigation<RootNavigationProps>()
   const updateUserDetailsMutation = useUpdateUserDetails()
+  const [selectedBirthPlace, setSelectedBirthPlace] = useState<AutocompletePrediction>()
+  const [birthPlaceQuery, setBirthPlaceQuery] = useState<string>('')
+
+  const {
+    autocompleteResults, // Use this for rendering in your component
+    isFetching: isLocationAutocompleteLoading,
+    isError,
+    error: locationError,
+  } = useGetLocationAutocomplete(birthPlaceQuery)
 
   const [name, setName] = useState<string>('')
-  const [birthLocation, setBirthLocation] = useState<string>('')
   const [dateSet, setDateSet] = useState<boolean>(false)
   const [timeSet, setTimeSet] = useState<boolean>(false)
+
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const date = new Date(2000, 0, 1) // January is 0 in JavaScript's Date
     date.setHours(12, 0, 0, 0)
     return date
   })
-  const timeSheetModalRef = useRef<BottomSheetModalMethods>(null)
   const dateSheetModalRef = useRef<BottomSheetModalMethods>(null)
+  const timeSheetModalRef = useRef<BottomSheetModalMethods>(null)
+  const placeSheetModalRef = useRef<BottomSheetModalMethods>(null)
+  const placeSearchRef = useRef<TextInput>(null)
 
   const renderDateSheet = () => {
     const handleDateChange = (event: DateTimePickerEvent, date?: Date | undefined) => {
@@ -54,7 +95,7 @@ const UserDetails: React.FC = () => {
       }
     }
     return (
-      <CustomBottomSheetModal ref={dateSheetModalRef}>
+      <CustomBottomSheetModal ref={dateSheetModalRef} snapPoint="65%">
         <Box mt="l">{renderTitle('Date of birth')}</Box>
         <Box flex={1} justifyContent="space-between">
           <Box />
@@ -96,7 +137,7 @@ const UserDetails: React.FC = () => {
       }
     }
     return (
-      <CustomBottomSheetModal ref={timeSheetModalRef}>
+      <CustomBottomSheetModal ref={timeSheetModalRef} snapPoint="65%">
         <Box mt="l">{renderTitle('Time of birth')}</Box>
         <Box flex={1} justifyContent="space-between">
           <Box />
@@ -121,6 +162,46 @@ const UserDetails: React.FC = () => {
           }}
           size="medium"
         />
+      </CustomBottomSheetModal>
+    )
+  }
+
+  const renderPlaceSheet = () => {
+    return (
+      <CustomBottomSheetModal ref={placeSheetModalRef} snapPoint="90%">
+        <Box mt="l" mb="l">
+          {renderTitle('Place of birth')}
+        </Box>
+        <Box mb="m" flex={1}>
+          <Box mb="m">
+            <Input
+              placeholder="eg: Austin, TX"
+              value={birthPlaceQuery}
+              onChangeText={setBirthPlaceQuery}
+              autoCorrect={false}
+              ref={placeSearchRef}
+              onSubmitEditing={() => {
+                setTimeout(() => {
+                  placeSearchRef.current?.focus()
+                }, 0)
+              }}
+              returnKeyType="search"
+            />
+          </Box>
+          {locationError && <Text>Error: {locationError.message}</Text>}
+          {autocompleteResults.map(suggestion => (
+            <Box p="xs" key={suggestion.place_id}>
+              <Text
+                onPress={() => {
+                  setSelectedBirthPlace(suggestion)
+                  setBirthPlaceQuery('')
+                  placeSheetModalRef.current?.dismiss()
+                }}>
+                {suggestion.description}
+              </Text>
+            </Box>
+          ))}
+        </Box>
       </CustomBottomSheetModal>
     )
   }
@@ -164,7 +245,7 @@ const UserDetails: React.FC = () => {
         <Box mb="m">
           <Input
             placeholder="Date of birth"
-            editable={false} // Disables editing and cursor
+            editable={false}
             value={dateSet ? formattedDate : undefined}
             onChangeText={setName}
             onPressIn={() => {
@@ -176,7 +257,7 @@ const UserDetails: React.FC = () => {
         <Box mb="m">
           <Input
             placeholder="Time of birth"
-            editable={false} // Disables editing and cursor
+            editable={false}
             value={timeSet ? formattedTime : undefined}
             showSoftInputOnFocus={false}
             onPressIn={() => {
@@ -187,10 +268,16 @@ const UserDetails: React.FC = () => {
         </Box>
         <Box mb="m">
           <Input
-            placeholder="Place of birth (todo)"
-            value={birthLocation}
-            onChangeText={setBirthLocation}
-            autoCorrect={false}
+            placeholder="Place of birth"
+            editable={false}
+            value={selectedBirthPlace?.description}
+            showSoftInputOnFocus={false}
+            onPressIn={() => {
+              placeSheetModalRef.current?.present()
+              setTimeout(() => {
+                placeSearchRef.current?.focus()
+              }, 50)
+            }}
           />
         </Box>
       </>
@@ -211,7 +298,7 @@ const UserDetails: React.FC = () => {
       )
     }
 
-    const isDisabled = !name || !dateSet || !timeSet
+    const isDisabled = !name || !dateSet || !timeSet || !selectedBirthPlace
     return (
       <>
         <Button
@@ -251,14 +338,15 @@ const UserDetails: React.FC = () => {
                 </Box>
                 {renderInputs()}
               </ScrollView>
-              {renderLogOutButton()}
               <Box my="m">{renderSignUpButton()}</Box>
               <Box />
             </Box>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
+        {renderLogOutButton()}
         {renderDateSheet()}
         {renderTimeSheet()}
+        {renderPlaceSheet()}
       </SafeAreaView>
     </BottomSheetModalProvider>
   )

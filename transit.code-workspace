@@ -21,6 +21,8 @@
       "react-native-app/": true,
       "supabase/functions/": true
     },
-    "deno.importMap": "./supabase/functions/import_map.json"
+    "deno.importMap": "./supabase/functions/import_map.json",
+    "editor.formatOnSave": true,
+    "[typescript]": { "editor.defaultFormatter": "denoland.vscode-deno" }
   }
 }

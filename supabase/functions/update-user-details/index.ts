@@ -28,7 +28,7 @@ serve(async (req) => {
       user_id: user.id,
       name: body.name,
       birth_date: body.birth_date,
-      birth_time: "",
+      birth_time: body.birth_time,
       birth_location: "",
       birth_latitude: 0,
       birth_longitude: 0,

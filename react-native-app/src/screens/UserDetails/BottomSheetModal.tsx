@@ -12,6 +12,7 @@ import Box from 'components/Box'
 
 interface CustomBottomSheetModalProps {
   children: React.ReactNode
+  snapPoint: string
 }
 
 export interface BottomSheetModalMethods {
@@ -31,7 +32,7 @@ export interface BottomSheetModalMethods {
 }
 
 const CustomBottomSheetModal = forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
-  ({ children }, ref) => {
+  ({ children, snapPoint }, ref) => {
     const bottomSheetRef = useRef<BottomSheetModalMethods>(null)
 
     // Extend the ref methods
@@ -43,7 +44,7 @@ const CustomBottomSheetModal = forwardRef<BottomSheetModalMethods, CustomBottomS
       // Add other methods as needed
     }))
 
-    const snapPoints = useMemo(() => ['65%'], [])
+    const snapPoints = useMemo(() => [snapPoint], [])
 
     return (
       <BottomSheetModal
