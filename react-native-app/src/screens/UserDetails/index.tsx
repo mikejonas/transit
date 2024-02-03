@@ -292,8 +292,14 @@ const UserDetails: React.FC = () => {
 
   const renderSignUpButton = () => {
     const handleSubmit = () => {
+      if (!name || !dateSet || !timeSet || !selectedBirthPlace) return
       updateUserDetailsMutation.mutate(
-        { name, birthDate: selectedDate },
+        {
+          name,
+          birthDate: selectedDate,
+          birthLocation: selectedBirthPlace.description,
+          birthLocationPlaceId: selectedBirthPlace.place_id,
+        },
         { onSuccess: () => navigation.navigate('MainAppDrawerNavigator') },
       )
     }

@@ -8,6 +8,7 @@ import {
 import {
   AstrologicalDetailsDatabase,
 } from "../helpers/database_helpers/astrological_details_database.ts";
+import { getCityCoordinates } from "../helpers/google-places.ts";
 
 serve(async (req) => {
   try {
@@ -21,21 +22,27 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("User not found");
 
-    const body = await req.json();
-    const date = new Date(body.birth_date);
+    const {
+      name,
+      birth_date: birthDateAndTime,
+      birth_location,
+      birth_location_place_id,
+    } = await req.json();
 
-    const birth_date = date.toISOString().slice(0, 10);
-    const birth_time = date.toISOString().slice(11, 19);
+    const birthDateISO = new Date(birthDateAndTime).toISOString();
 
-    // TODO: Support more columns
+    const birthDate = birthDateISO.slice(0, 10);
+    const birthTime = birthDateISO.slice(11, 19);
+
+    const birthCoordinates = await getCityCoordinates(birth_location_place_id);
     const user_details: UserDetails = {
       user_id: user.id,
-      name: body.name,
-      birth_date: birth_date,
-      birth_time: birth_time,
-      birth_location: "",
-      birth_latitude: 0,
-      birth_longitude: 0,
+      name: name,
+      birth_date: birthDate,
+      birth_time: birthTime,
+      birth_location: birth_location,
+      birth_latitude: birthCoordinates.lat,
+      birth_longitude: birthCoordinates.lng,
     };
     const added = await user_details_db.AddUserDetails(user_details);
     if (added) {

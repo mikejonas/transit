@@ -53,12 +53,19 @@ export const edgeFunctionRequests = {
     return response;
   },
   addUserDetails: async (
-    { name, birthDate }: { name: string; birthDate: Date },
+    { name, birthDate, birthLocation, birthLocationPlaceId }: {
+      name: string;
+      birthDate: Date;
+      birthLocation: string;
+      birthLocationPlaceId: string;
+    },
   ) => {
     const response = await supabaseClient.functions.invoke("add-user-details", {
       body: JSON.stringify({
         name,
         birth_date: birthDate,
+        birth_location: birthLocation,
+        birth_location_place_id: birthLocationPlaceId,
       }),
     });
 
@@ -131,7 +138,7 @@ export const edgeFunctionRequests = {
     if (!response.data) {
       throw new Error("Location autocomplete response format invalid");
     }
-    
+
     return response as LocationAutocompleteResponse;
   },
-}
+};
