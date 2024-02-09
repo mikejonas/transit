@@ -9,6 +9,9 @@ npm-debug.log
 yarn-error.log
 
 # global
-*.env
+*.env*
 supabase/.temp/
 supabase/.branches/
+
+# react native
+react-native-app/eas.json
