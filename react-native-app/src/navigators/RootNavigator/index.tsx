@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { StatusBar, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack'
 import { useTheme } from '@shopify/restyle'
-import { Session } from '@supabase/supabase-js'
 import MainAppDrawerNavigator from 'navigators/MainAppDrawerNavigator'
 import InitialLoadingScreen from 'screens/InitialLoading'
-import { requests } from 'requests'
 import AuthNavigator from 'navigators/AuthNavigator'
 import UserDetails from 'screens/UserDetails'
 import { Theme } from 'theme/restyle'
+import { useAuthState } from './hooks/useAuthState' // Update the path according to your project structure
 
 export type StackNavigatorParams = {
   AuthNavigator: undefined
@@ -27,76 +26,29 @@ const Stack = createStackNavigator<StackNavigatorParams>()
 const RootNavigator = () => {
   const navigation = useNavigation<RootNavigationProps>()
   const theme = useTheme<Theme>()
+  const { isLoading, isAuthenticated, hasUserDetails } = useAuthState()
 
-  const currentRouteNameRef = useRef<string | null>(null)
-  const [userSession, setUserSession] = useState<Session | null>(null)
-  const [isLoadingUserDetails, setIsLoadingUserDetails] = useState(true)
-  const [hasUserDetails, setHasUserDetails] = useState(false)
-
-  const getUserDetails = async (): Promise<void> => {
-    setIsLoadingUserDetails(true)
-    try {
-      const response = await requests.generated.getUserDetails()
-      setHasUserDetails(!!response.data)
-    } catch (error) {
-      setHasUserDetails(false)
-    }
+  const getInitialRouteName = () => {
+    if (isLoading) return 'Loading'
+    if (!isAuthenticated) return 'AuthNavigator'
+    return hasUserDetails ? 'MainAppDrawerNavigator' : 'UserDetails'
   }
 
+  const initialRouteName = getInitialRouteName()
+
+  // Effect to navigate based on auth state changes
   useEffect(() => {
-    const { data: subscription } = requests.auth.onAuthStateChange(async (event, session) => {
-      const isSignedIn = !!session
-      if (event === 'INITIAL_SESSION') {
-        if (isSignedIn) await getUserDetails()
-        setIsLoadingUserDetails(false)
-      } else if (event === 'SIGNED_IN') {
-        await getUserDetails()
-        setIsLoadingUserDetails(false)
-      } else if (event === 'SIGNED_OUT') {
-        setUserSession(session)
-        setHasUserDetails(false)
-      }
-      setUserSession(session)
+    navigation.reset({
+      index: 0,
+      routes: [{ name: initialRouteName }],
     })
-
-    return () => {
-      // Ensure correct and safe unsubscription
-      if (subscription?.subscription?.unsubscribe) {
-        subscription.subscription.unsubscribe()
-      }
-    }
-  }, [])
-
-  const getRouteName = () => {
-    if (!userSession /* not signed in*/) {
-      return 'AuthNavigator'
-    } else {
-      return hasUserDetails ? 'MainAppDrawerNavigator' : 'UserDetails'
-    }
-  }
-
-  useEffect(() => {
-    if (!isLoadingUserDetails) {
-      const newRouteName = getRouteName()
-
-      if (currentRouteNameRef.current !== newRouteName) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: newRouteName }],
-        })
-
-        currentRouteNameRef.current = newRouteName
-      }
-    }
-  }, [userSession, isLoadingUserDetails, hasUserDetails, navigation])
-
-  const INITIAL_ROUTE_NAME = 'Loading'
+  }, [initialRouteName, navigation])
 
   return (
-    <View testID="RootNavigator" style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
       <Stack.Navigator
-        initialRouteName={INITIAL_ROUTE_NAME}
+        initialRouteName={initialRouteName}
         screenOptions={{
           animationEnabled: false,
           cardStyle: { backgroundColor: theme.colors.background },
@@ -109,24 +61,14 @@ const RootNavigator = () => {
         <Stack.Screen
           name="AuthNavigator"
           component={AuthNavigator}
-          options={{
-            headerShown: false,
-          }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="MainAppDrawerNavigator"
           component={MainAppDrawerNavigator}
-          options={{
-            headerShown: false,
-          }}
+          options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="UserDetails"
-          component={UserDetails}
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="UserDetails" component={UserDetails} options={{ headerShown: false }} />
       </Stack.Navigator>
     </View>
   )
