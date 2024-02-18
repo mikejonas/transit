@@ -1,0 +1,20 @@
+# Ignore Python virtual environment
+transit/
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore VSCode workspace settings
+.vscode/
+
+# Ignore any local Python package installations
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore any local Jupyter kernel metadata
+.jupyter/
+
+
+# Ignore Jupyter kernel files
+share
