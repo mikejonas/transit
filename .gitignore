@@ -9,7 +9,7 @@ npm-debug.log
 yarn-error.log
 
 # global
-*.env*
+*.env
 supabase/.temp/
 supabase/.branches/
 
