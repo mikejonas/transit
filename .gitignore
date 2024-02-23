@@ -10,6 +10,9 @@ yarn-error.log
 
 # global
 *.env
+dist/
+
+# supabase
 supabase/.temp/
 supabase/.branches/
 
