@@ -1,12 +1,17 @@
-# AWS CDK and SAM Workflow Setup Guide
+# AWS Cloud Development Kit (CDK) and SAM Workflow Setup Guide
 
-This guide provides steps to set up a workflow using AWS Cloud Development Kit (CDK) and AWS Serverless Application Model (SAM) for building serverless applications.
+This guide provides steps to set up a workflow using AWS Cloud Development Kit (CDK) and AWS Serverless Application Model (SAM) for running serverless applications.
+
+CDK is an AWS framework to define cloud application resources. So in code, we can set up our lambda functions, api gateways, and more, and then deploy it with a terminal command.
+
+SAM is a tool for building and running aws serverless applications (like lambda's and api gateway). Here, we're using it to run our defined CDK resources locally, in a dropbox container.
 
 ## Prerequisites
 
 - Node.js and npm
 - Python and pip
 - AWS CLI configured with your credentials
+- Dropbox
 
 ## Setting Up AWS SAM
 
