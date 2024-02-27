@@ -9,3 +9,5 @@ cdk.out
 
 # AWS SAM
 template.yaml
+src/lambda-python/.tmp
+src/lambda-python/venv
