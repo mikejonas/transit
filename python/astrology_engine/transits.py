@@ -136,7 +136,7 @@ class ZodiacTransits:
 
         for planet_info in PLANETARY_INFO:
             planet_id = planet_info["id"]
-            ret_val, _ = swe.calc_ut(julian_day_ut, planet_id, swe.FLG_SWIEPH)
+            ret_val, ret_flags = swe.calc_ut(julian_day_ut, planet_id, swe.FLG_SWIEPH | swe.FLG_SPEED)
             lon = ret_val[0] % 360
             sign = get_zodiac_sign(lon)
             degree_within_sign = lon % 30
@@ -147,6 +147,8 @@ class ZodiacTransits:
             is_in_retrograde = ret_val[3] < 0
 
             birth_details["object_reports"].append({
+                "lon": lon,
+                "degree_within_sign": degree_within_sign,
                 "degrees": whole_degrees,
                 "minutes": minutes,
                 "seconds": seconds,

@@ -3,18 +3,17 @@ import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as apigatewayv2 from "aws-cdk-lib/aws-apigatewayv2";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { PythonFunction } from "@aws-cdk/aws-lambda-python-alpha";
 import * as apigatewayv2Integrations from "aws-cdk-lib/aws-apigatewayv2-integrations";
+import * as apigatewayv2Authorizers from "aws-cdk-lib/aws-apigatewayv2-authorizers";
+
 import path = require("path");
 import { execSync } from "child_process";
 
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config();
 
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-
-    // Node.js Lambda Function for HelloWorld
     const helloWorldLambda = new NodejsFunction(
       this,
       "HelloWorldLambdaFunction",
@@ -33,8 +32,23 @@ export class CdkStack extends cdk.Stack {
         handler: "handler",
         entry: "./src/lambda-node/location-autocomplete/index.ts",
         environment: {
+          GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY!,
+        },
+      }
+    );
+
+    const UpdateUserDetailsLambda = new NodejsFunction(
+      this,
+      "UpdateUserDetailsLambdaFunction",
+      {
+        runtime: lambda.Runtime.NODEJS_20_X,
+        handler: "handler",
+        entry: "./src/lambda-node/update-user-details/index.ts",
+        environment: {
           OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
           GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY!,
+          SUPABASE_URL: process.env.SUPABASE_URL!,
+          SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
         },
       }
     );
@@ -73,6 +87,24 @@ export class CdkStack extends cdk.Stack {
       description: "HTTP API endpoint for Lambda Functions.",
     });
 
+    const jwtVerifierLambda = new NodejsFunction(this, "JwtVerifierFunction", {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: "handler",
+      entry: path.join(__dirname, "../src/lambda-node/jwtVerifier/index.ts"),
+      environment: {
+        SUPABASE_JWT_SECRET: process.env.SUPABASE_JWT_SECRET!,
+      },
+    });
+
+    // Custom Authorizer for the API Gateway
+    const jwtAuthorizer = new apigatewayv2Authorizers.HttpLambdaAuthorizer(
+      "JwtAuthorizer",
+      jwtVerifierLambda,
+      {
+        identitySource: ["$request.header.Authorization"], // Define where to extract the token from
+      }
+    );
+
     httpApi.addRoutes({
       path: "/hello-node",
       methods: [apigatewayv2.HttpMethod.GET],
@@ -80,15 +112,25 @@ export class CdkStack extends cdk.Stack {
         "HelloWorldLambdaIntegration",
         helloWorldLambda
       ),
+      authorizer: jwtAuthorizer,
     });
 
-    // Add routes for locationAutocompleteLambda
     httpApi.addRoutes({
       path: "/location-autocomplete",
       methods: [apigatewayv2.HttpMethod.GET],
       integration: new apigatewayv2Integrations.HttpLambdaIntegration(
         "LocationAutocompleteLambdaIntegration",
         locationAutocompleteLambda
+      ),
+      authorizer: jwtAuthorizer,
+    });
+
+    httpApi.addRoutes({
+      path: "/update-user-details",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: new apigatewayv2Integrations.HttpLambdaIntegration(
+        "UpdateUserDetailsLambdaLambdaIntegration",
+        UpdateUserDetailsLambda
       ),
     });
 
