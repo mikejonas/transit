@@ -45,7 +45,7 @@ const RootNavigator = () => {
   }, [initialRouteName, navigation])
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} testID="RootNavigator">
       <StatusBar barStyle="light-content" />
       <Stack.Navigator
         initialRouteName={initialRouteName}

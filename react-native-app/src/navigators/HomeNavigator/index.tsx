@@ -28,7 +28,7 @@ const HomeNavigator = () => {
   const theme = useTheme<Theme>()
 
   return (
-    <View testID="TestNavigator" style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <BottomSheetModalProvider>
         <StatusBar barStyle="light-content" />
         <Stack.Navigator
