@@ -41,5 +41,5 @@ export default (): ExpoConfig => ({
       },
     ],
   ],
-  owner: 'mikejonas',
+  owner: 'transit_astrology',
 })
