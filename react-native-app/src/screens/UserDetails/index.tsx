@@ -29,7 +29,7 @@ const useGetLocationAutocomplete = (searchQuery: string) => {
 
   const { data, isFetching, isError, error } = useQuery({
     queryKey: ['locationAutocomplete', searchQuery],
-    queryFn: () => requests.edgeFunctions.locationAutocomplete({ searchQuery }),
+    queryFn: () => requests.lambdaFunctions.locationAutocomplete({ searchQuery }),
     enabled: searchQuery.length > 2,
     staleTime: Infinity,
   })

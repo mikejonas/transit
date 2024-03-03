@@ -8,12 +8,12 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "synth": "dotenv -e ../.env.local -- cdk synth --no-staging > template.yaml",
-    "start-api": "npm run synth && sam local start-api -t template.yaml --warm-containers EAGER",
-    "sam-build": "sam build --use-container",
+    "synth": "cdk synth --no-staging > template.yaml",
+    "start:development": "dotenv -e ../.env.development -- npm run synth && sam local start-api -t template.yaml",
+    "start:production": "dotenv -e ../.env.production -- npm run synth && sam local start-api -t template.yaml",
     "nodemon-reload": "nodemon --watch src --ext ts --exec 'npm run synth'",
-    "diff": "dotenv -e ../.env -- cdk diff --profile transit_team",
-    "deploy": "dotenv -e ../.env -- cdk deploy --profile transit_team"
+    "diff": "dotenv -e ../.env.production -- cdk diff --profile transit_team",
+    "deploy": "dotenv -e ../.env.production -- cdk deploy --profile transit_team"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.134",

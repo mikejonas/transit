@@ -9,8 +9,8 @@ npm-debug.log
 yarn-error.log
 
 # global
-*.env
-*.env.local
+*.env*
+env.ts
 dist/
 
 # supabase

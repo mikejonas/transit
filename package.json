@@ -5,18 +5,25 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "develop:supabase": "cd supabase/functions && npx supabase start -x imgproxy,storage-api",
-    "develop:react-native": "cd react-native-app && npm run start:dev",
-    "develop:aws": "npm-run-all --parallel start:aws-api watch:node-lambdas",
-    "start:aws-api": "cd aws-services/cdk && npm run start-api",
-    "watch:node-lambdas": "cd aws-services/cdk && npm run nodemon-reload",
+    "generate-env": "npx ts-node env/generate.ts",
+    "start:aws": "cd aws-services/cdk && npm-run-all --parallel start:development nodemon-reload",
+    "start:react-native:development": "cd react-native-app && npm run start:development",
+    "start:react-native:production": "cd react-native-app && npm run start:production",
+    "start:supabase": "cd supabase/functions && npx supabase start -x imgproxy,storage-api",
     "stop:supabase": "cd supabase/functions && npx supabase stop",
+    "start:api": "npm-run-all --parallel start:aws start:supabase",
     "prepare": "husky install"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^20.11.24",
     "husky": "^8.0.0",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
   }
 }

@@ -1,5 +1,6 @@
 import { authRequests } from './auth'
 import { edgeFunctionRequests } from './edgeFunctions'
+import { lambdaFunctionRequests } from './lambdaFunctions'
 import { generatedRequests } from './generated'
 
 export const requests = {
@@ -9,4 +10,6 @@ export const requests = {
   generated: generatedRequests,
   // Edge functions we created
   edgeFunctions: edgeFunctionRequests,
+  // Lambda functions we created
+  lambdaFunctions: lambdaFunctionRequests,
 }

@@ -2,18 +2,10 @@
  * Use this file to export public configs related to the app environment (prod, local, ect...)
  **/
 
-const environment = process.env.EXPO_PUBLIC_APP_ENV as 'prod' | 'dev'
-const supabaseDevUrl = process.env.EXPO_PUBLIC_SUPABASE_DEV_URL as string
-const supabaseProdUrl = process.env.EXPO_PUBLIC_SUPABASE_PROD_URL as string
+export const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL as string
+export const awsApiGatewayUrl = process.env.EXPO_PUBLIC_AWS_API_GATEWAY_URL
 
-
-if (environment !== 'prod' && environment !== 'dev') {
-  throw new Error(`APP_ENV must be 'prod' or 'dev'`)
+const environment = process.env.EXPO_PUBLIC_APP_ENV as 'development' | 'test' | 'production'
+if (environment !== 'production' && environment !== 'development' && environment !== 'test') {
+  throw new Error(`APP_ENV must be 'production', 'development' or 'test'`)
 }
-
-const supabaseUrls = {
-  dev: supabaseDevUrl,
-  prod: supabaseProdUrl,
-}
-console.log({environment, ...supabaseUrls})
-export const supabaseUrl = supabaseUrls[environment]

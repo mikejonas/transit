@@ -4,19 +4,23 @@
 
 ### Initial Setup and more detailed management
 
-View the README and install dependencies in the respective project folders
+- View the README and install dependencies in the respective project folders
+
+- In the base `/env` folder duplicate `env.template.ts` and rename it to `env.ts`. Fill in missing values. Then run `npm run generate-env` to generate needed .env files throughout the mono repo
 
 ### Day-to-day workflow
 
-#### Start services
+### Start services
+
+- Start docker desktop
 
 ```bash
-npm run develop:supabase
-npm run develop:react-native
-npm run develop:aws
+npm run start:api # starts aws and supabase development servers
+npm run start:react-native:development # react native against development server
+npm run start:react-native:production # react native against production server
 ```
 
-#### If you're getting issues running app on expo go on native devices
+_If you're getting issues running app on expo go on native devices:_
 
 Use the [--tunnel](https://docs.expo.dev/more/expo-cli/#tunneling) flag. (Tunnel does not work with --offline flag)
 
